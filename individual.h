@@ -2,6 +2,7 @@
 #define INDIVIDUAL
 
 #include <stdio.h>
+#include "movement.h"
 
 #define secondsInAMinute 60
 #define secondsInADay 86400
@@ -21,6 +22,7 @@ typedef struct
     unsigned int y;
     unsigned int counter;
     StateIndividual state;
+    Movement movement;
 } Individual;
 
 
