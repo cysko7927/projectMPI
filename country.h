@@ -8,13 +8,13 @@ typedef struct
 {
     unsigned int x;
     unsigned int y;
-    char name[10];
+    char name;
     
 } Country;
 
 
 
-Country addCountry(int x,int y,char name[10]);
+Country addCountry(int x,int y,char name);
 
 
 #endif

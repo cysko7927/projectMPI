@@ -15,7 +15,7 @@ World createWorld(int x,int y,Country countries[])
     world.x=x;
     world.y=y;
     strcpy(world.countries,countries); 
-    
+
     return world;
 }
 

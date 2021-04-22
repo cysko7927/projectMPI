@@ -7,7 +7,7 @@
  * @param y height of the country
  * @return country 
  */
-Country addCountry(int x,int y,char name[10])
+Country addCountry(int x,int y,char name[])
 {
     Country country;
 
