@@ -1,5 +1,5 @@
-#ifndef REGION
-#define REGION
+#ifndef COUNTRY
+#define COUNTRY
 
 #include <stdio.h>
 
@@ -10,11 +10,11 @@ typedef struct
     unsigned int y;
     char name[10];
     
-} Region;
+} Country;
 
 
 
-Region addRegion(int x,int y,char name[10]);
+Country addCountry(int x,int y,char name[10]);
 
 
 #endif

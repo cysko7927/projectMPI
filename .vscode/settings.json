@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "country.h": "c",
+        "world.h": "c"
+    }
+}
