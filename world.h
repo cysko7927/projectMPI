@@ -15,7 +15,7 @@ typedef struct
 
 
 
-World createWorld(int x,int y,Country countries[]);
+World createWorld(int x,int y,Country *countries);
 
 
 #endif

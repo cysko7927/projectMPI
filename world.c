@@ -8,7 +8,7 @@
  * @param y height of the map
  * @return map
  */
-World createWorld(int x,int y,Country countries[])
+World createWorld(int x,int y,Country *countries)
 {
     World world;
 
