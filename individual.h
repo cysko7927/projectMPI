@@ -2,6 +2,7 @@
 #define INDIVIDUAL
 
 #include <stdio.h>
+#include "country.h"
 
 #define secondsInAMinute 60
 #define secondsInADay 86400
@@ -21,10 +22,13 @@ typedef struct
     unsigned int y;
     unsigned int counter;
     StateIndividual state;
+    Country *country;
 } Individual;
 
 
 void updateState(unsigned int neighbors, Individual * individual);
+
+void updateCountry(Individual *individual, Country *newCountry);
 
 Individual createHealthyIndividual(int x,int y);
 

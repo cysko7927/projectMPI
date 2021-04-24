@@ -99,6 +99,16 @@ int main(int argc, char const *argv[])
         return 0;
     }
 
+    if(worldHeight%countryHeight!=0){
+        printf("the height of the wolrd has to been divisible by the height of the countries");
+        return 0;
+    }
+
+    if(worldWidht%countryWidht!=0){
+        printf("the widht of the wolrd has to been divisible by the widht of the countries");
+        return 0;
+    }
+
      int numOfCountries= (worldHeight*worldWidht) / (countryWidht*countryHeight);
 //---------------------------------------------------------------------------------------------------//
 
@@ -117,7 +127,7 @@ int main(int argc, char const *argv[])
 World buildWorld(int worldWidht,int worldHeight,int numOfCountries,int countryWidht,int countryHeight){
 
      /*
-        y--------z  Map x=0 y=worldHeight w=
+        y--------z  
         |        |
         x--------w
     */
@@ -129,7 +139,7 @@ World buildWorld(int worldWidht,int worldHeight,int numOfCountries,int countryWi
 // now that the vertices of the map has been found we can place the countries
 
  /*
-        yp------zp  Map x=0 y=worldHeight w=
+        yp------zp 
         |        |
         xp------wp
     */
@@ -146,7 +156,7 @@ Point x,y,w,z;
 
        if(widhtOccupied+countryWidht>worldWidht)
        {
-            /* y--------z  Map x=0 y=worldHeight w=
+            /* y--------z  
                |        |
                |     ---|--
                x-----|--w--|
@@ -163,7 +173,7 @@ Point x,y,w,z;
         w= buildPoint(widhtOccupied+countryWidht,heightOccupied);
         z= buildPoint(widhtOccupied+countryWidht,heightOccupied+countryHeight); 
 
-        countries[i]=addCountry(x,y,z,w,i+'0');
+        countries[i]=addCountry(x,y,z,w,i);
     }
 
 

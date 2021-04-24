@@ -16,6 +16,7 @@ Individual createHealthyIndividual(int x,int y)
     individual.y = y;
     individual.counter = 0;
     individual.state = healthy;
+    
 
     return individual;
 }
@@ -105,3 +106,4 @@ void setCoordinates(Individual *individual, int x,int y)
     individual->x = x;
     individual->y = y;
 }
+
