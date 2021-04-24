@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <point.h>
+#include <individual.h>
 
 
 typedef struct 
@@ -19,13 +20,23 @@ typedef struct
     Point z;
     Point w;               
 
-    char name;
+    int name;
+
+    IndividualNode *individuals;
     
 } Country;
 
+typedef struct {
+    Individual *individual;
+    IndividualNode *next;
+
+}IndividualNode;
 
 
-Country addCountry(Point x,Point y,Point z,Point w,char name[]);
+Country addCountry(Point x,Point y,Point z,Point w,int name);
 
+void addIndividual(IndividualNode *individuals,Individual *individual);
+
+void removeIndividual(IndividualNode *individuals,Individual *individual);
 
 #endif
