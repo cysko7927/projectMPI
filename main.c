@@ -4,6 +4,7 @@
 
 
 
+
 int main(int argc, char const *argv[])
 {
             //0 N of individuals
@@ -12,9 +13,11 @@ int main(int argc, char const *argv[])
             //3 width of the world 
             //4 height of the countries
             //5 widht of the countries
-            //6 velocity
+            //6 speed
             //7 max distance
             // t
+
+//-----------------------------------------------  check on the parameters --------------------------------------//
 
     if(argc!=9){   
         printf("Please insert the required parameters");
@@ -27,7 +30,7 @@ int main(int argc, char const *argv[])
     int worldWidht=charToInt(argv[3]);
     int countryHeight=charToInt(argv[4]);
     int countryWidht=charToInt(argv[5]);
-    int velocity=charToInt(argv[6]);
+    int speed=charToInt(argv[6]);
     int maxDistance=charToInt(argv[7]);
     int time=charToInt(argv[8]);
     
@@ -38,7 +41,7 @@ int main(int argc, char const *argv[])
         worldWidht<0||
         countryHeight<0||
         countryWidht<0||
-        velocity<0||
+        speed<0||
         maxDistance<0||
         time<0
         ){
@@ -97,23 +100,79 @@ int main(int argc, char const *argv[])
     }
 
      int numOfCountries= (worldHeight*worldWidht) / (countryWidht*countryHeight);
-
-    Country *countries;
-    countries=malloc(numOfCountries*sizeof(Country));
+//---------------------------------------------------------------------------------------------------//
 
 
-    for(int i=0;i<numOfCountries;i++){
-        countries[i].name=i;
-        countries->x=countryWidht;
-        countries->y=countryHeight;
-    }
-        
-   World world=createWorld(worldWidht,worldHeight,countries);
+
+
+// creation of the world        
+   World world=buildWorld(worldWidht,worldHeight,numOfCountries,countryWidht,countryHeight);
     return 0;
 
 
 
 }
+
+
+World buildWorld(int worldWidht,int worldHeight,int numOfCountries,int countryWidht,int countryHeight){
+
+     /*
+        y--------z  Map x=0 y=worldHeight w=
+        |        |
+        x--------w
+    */
+ Point x= buildPoint(0,0);
+ Point w= buildPoint(worldWidht,0);
+ Point y= buildPoint(0,worldHeight);
+ Point z= buildPoint(worldWidht,worldHeight); 
+
+// now that the vertices of the map has been found we can place the countries
+
+ /*
+        yp------zp  Map x=0 y=worldHeight w=
+        |        |
+        xp------wp
+    */
+Country *countries;
+countries=malloc(numOfCountries*sizeof(Country));
+
+int widhtOccupied=0; // the value of the widht covered by the countries placed on the map
+int heightOccupied=0;  // the value of the height covered by the countries placed on the map
+
+
+Point x,y,w,z;
+   
+   for(int i=0;i<numOfCountries;i++){
+
+       if(widhtOccupied+countryWidht>worldWidht)
+       {
+            /* y--------z  Map x=0 y=worldHeight w=
+               |        |
+               |     ---|--
+               x-----|--w--|
+            */ 
+           //in this case i've to increase the y coordinate and start to occupy the upper region of the map
+           heightOccupied=heightOccupied+countryHeight;
+           widhtOccupied=0;
+       }
+
+
+
+        x= buildPoint(widhtOccupied,heightOccupied);
+        y= buildPoint(widhtOccupied,heightOccupied+countryHeight);
+        w= buildPoint(widhtOccupied+countryWidht,heightOccupied);
+        z= buildPoint(widhtOccupied+countryWidht,heightOccupied+countryHeight); 
+
+        countries[i]=addCountry(x,y,z,w,i+'0');
+    }
+
+
+
+return createWorld(x,y,z,w,countries);
+
+}
+
+
 
 int charToInt(char c){
 return c - '0';

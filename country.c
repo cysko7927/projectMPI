@@ -3,16 +3,17 @@
 
 /**
  * @brief Create a country on the map 
- * @param x base of the country
- * @param y height of the country
+ * @param x,y,z,w vertix of the country
  * @return country 
  */
-Country addCountry(int x,int y,char name[])
+Country addCountry(Point x,Point y,Point z,Point w,char name[])
 {
     Country country;
 
     country.x=x;
     country.y=y;
+    country.w=w;
+    country.z=z;
     strcpy(country.name,name); 
     return country;
 }

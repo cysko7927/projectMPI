@@ -3,19 +3,26 @@
 
 #include <stdio.h>
 #include <country.h>
-
+#include <point.h>
 
 typedef struct 
 {
-    unsigned int x;
-    unsigned int y;
-    Country  countries[];
+    /*
+        y--------z
+        |        |
+        x--------w
+    */
+    Point x;
+    Point y;
+    Point z;
+    Point w;
+    Country  *countries;
     
 } World;
 
 
 
-World createWorld(int x,int y,Country *countries);
+World createWorld(Point x,Point y,Point z,Point w,Country *countries);
 
 
 #endif

@@ -2,19 +2,30 @@
 #define COUNTRY
 
 #include <stdio.h>
+#include <point.h>
 
 
 typedef struct 
 {
-    unsigned int x;
-    unsigned int y;
+
+    /*
+        y--------z
+        |        |
+        x--------w
+    */
+
+    Point x;
+    Point y;
+    Point z;
+    Point w;               
+
     char name;
     
 } Country;
 
 
 
-Country addCountry(int x,int y,char name);
+Country addCountry(Point x,Point y,Point z,Point w,char name[]);
 
 
 #endif
