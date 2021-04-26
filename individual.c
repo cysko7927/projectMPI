@@ -12,8 +12,8 @@ Individual createHealthyIndividual(int x,int y)
 {
     Individual individual;
 
-    individual.x = x;
-    individual.y = y;
+    individual.point.x = x;
+    individual.point.y = y;
     individual.counter = 0;
     individual.state = healthy;
     
@@ -103,7 +103,22 @@ void updateState(unsigned int neighborsInfected, Individual * individual)
  */
 void setCoordinates(Individual *individual, int x,int y)
 {
-    individual->x = x;
-    individual->y = y;
+    individual->point.x = x;
+    individual->point.y = y;
 }
+/**
+ * Remove the individual from his country and move him in a new country
+ * updating the data structure inside the individual and the structs of the countries
+ * 
+ * @param individual individual to move in an other country
+ * @param newCountry country where the individual is moved
+ */
+void updateCountry(Individual *individual, Country *newCountry)
+{
+    removeIndividual(individual->country->individuals,individual); // remove the individual from the list inside the old country
+    individual->country = newCountry;//Update the reference to the country inside the individual
 
+    addIndividual(newCountry->individuals,individual); //Add the individual in the list inside the new country
+
+
+}

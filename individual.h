@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "movement.h"
 #include "country.h"
+#include "point.h"
 
 #define secondsInAMinute 60
 #define secondsInADay 86400
@@ -19,8 +20,7 @@ typedef enum
 
 typedef struct 
 {
-    unsigned int x;
-    unsigned int y;
+    Point point;
     unsigned int counter;
     StateIndividual state;
     Movement movement;
@@ -30,7 +30,7 @@ typedef struct
 
 void updateState(unsigned int neighbors, Individual * individual);
 
-void updateCountry(Individual *individual, Country *newCountry);
+void updateCountry(Individual *individual, Country *newCountry);//todo fare implementazione
 
 Individual createHealthyIndividual(int x,int y);
 
