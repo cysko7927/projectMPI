@@ -119,8 +119,9 @@ int main(int argc, char const *argv[])
    World world=buildWorld(worldWidht,worldHeight,numOfCountries,countryWidht,countryHeight);
     return 0;
 
+// add individuals to the world
 
-
+    addIndividuals( world,  numOfIndividuals,  numOfInfectedIndividuals);
 }
 
 
@@ -178,12 +179,73 @@ Point x,y,w,z;
 
 
 
-return createWorld(x,y,z,w,countries);
+return createWorld(x,y,z,w,countries,numOfCountries);
 
 }
 
 
 
 int charToInt(char c){
-return c - '0';
+    return c - '0';
+}
+
+void addIndividuals(World world, int numOfIndividuals, int numOfInfectedIndividuals){
+
+    Country *country=world.countries;
+    int numberOfCountries=world.numOfCountries;
+    int i=0;
+    int restOfPeople=numOfIndividuals;
+    int restOfInfectedPeople=numOfInfectedIndividuals;
+    int amountPerCountry;
+
+//start scan of the countries
+    while (i<=numberOfCountries && restOfPeople>0)
+    {
+        //in order to distribute the individuals around the world
+        amountPerCountry=getAmountPerCountry(restOfPeople);
+        
+        //in order to place individuals inside the designated country
+        while(amountPerCountry>0){
+
+            if(restOfPeople>0){
+
+                Individual *individual;
+                if(restOfInfectedPeople<=0)
+                individual->state=healthy;
+    
+                else
+                {
+                    //choose if the individual is healthy
+                    individual->state=healthyOrSick();
+                    //if the individual is infected we've to decrease the number of infected that needs to be placed
+                    if(individual->state==infected)
+                        restOfInfectedPeople--;
+                }
+
+                addIndividual(country[i].individuals,individual);
+                restOfPeople--;
+                amountPerCountry--;
+            }
+
+            else return; //all the individuals have been distributed
+
+        }
+
+    i++;
+
+    }
+
+}
+
+StateIndividual healthyOrSick(){
+    int randomnumber = rand() % 2;
+    if(randomnumber==0){
+        return healthy;
+    }
+    return infected;
+}
+
+int getAmountPerCountry(restOfPeople){
+    int randomnumber = rand() % restOfPeople;
+    return randomnumber;
 }

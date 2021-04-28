@@ -8,7 +8,7 @@
  * @param countries contains all the countries that have to be added to the world
  * @return map
  */
-World createWorld(Point x,Point y,Point z,Point w,Country *countries)
+World createWorld(Point x,Point y,Point z,Point w,Country *countries,int numOfCountries)
 {
     World world;
 
@@ -17,8 +17,12 @@ World createWorld(Point x,Point y,Point z,Point w,Country *countries)
     world.z=z;
     world.w=w;
     world.countries=countries;
+    world.numOfCountries=numOfCountries;
 
     return world;
 }
 
+Country *getCountries(World world){
+    return world.countries;
+}
 

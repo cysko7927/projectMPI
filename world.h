@@ -17,12 +17,14 @@ typedef struct
     Point z;
     Point w;
     Country  *countries;
+    int numOfCountries;
     
 } World;
 
 
 
-World createWorld(Point x,Point y,Point z,Point w,Country *countries);
+World createWorld(Point x,Point y,Point z,Point w,Country *countries,int numOfCountries);
+Country *getCountries(World world);
 
 
 #endif
