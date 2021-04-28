@@ -6,7 +6,7 @@
 
 typedef enum 
 {
-    UP,DOWN,LEFT,RIGHT,DIAGONAL,STOP
+    UP,DOWN,LEFT,RIGHT,UPLEFT,UPRIGHT,DOWNLEFT,DOWNRIGHT,STOP
 } Direction;
 
 typedef struct 

@@ -249,3 +249,131 @@ int getAmountPerCountry(restOfPeople){
     int randomnumber = rand() % restOfPeople;
     return randomnumber;
 }
+
+void doMovement(Individual individual,World world){
+
+    //1st randomically choose a direction
+    individual.movement.direction=pickADirection(world,individual);
+
+}
+
+Direction pickADirection(World world,Individual individual){
+
+ Direction dir;
+  //UP,DOWN,LEFT,RIGHT,UPLEFT,UPRIGHT,DOWNLEFT,DOWNRIGHT,STOP
+ int randomnumber = rand() % 9;
+ switch (randomnumber)
+ {
+     case 0: dir=UP;
+     break;
+     case 1: dir=DOWN;
+     break;  
+     case 2: dir=LEFT;
+     break;  
+     case 3: dir=RIGHT;
+     break;  
+     case 4: dir=UPLEFT;
+     break;  
+     case 5: dir=UPRIGHT;
+     break;
+     case 6: dir=DOWNLEFT;
+     break;
+     case 7: dir=DOWNRIGHT;
+     break;
+     case 8: dir=STOP;
+     break;  
+ 
+ default: dir=STOP;
+     break;
+ }
+
+if(dir!=STOP)
+    dir=checkIfPossibleOtherwiseChange(dir,0,world,individual);
+return dir;
+
+}
+
+Direction checkIfPossibleOtherwiseChange(Direction dir,int attempts,World world,Individual individual){
+    //UP,DOWN,LEFT,RIGHT,UPLEFT,UPRIGHT,DOWNLEFT,DOWNRIGHT,
+    int numberOfAttemps=attempts;
+
+    if(attempts<2){
+
+    switch (dir)
+    {
+    case UP:
+        /*
+        the individual moves along its y coordinate by increasing it 
+            -> check if the movement can push the individual out the upper border of the world
+        */
+       if(individual.movement.v+individual.point.y<=world.y.y) //if so the movement is possible
+            return dir;
+       return checkIfPossibleOtherwiseChange(DOWN,numberOfAttemps++,world,individual);     
+            
+    case DOWN:
+        /*
+        the individual moves along its y coordinate by decreasing it 
+            -> check if the movement can push the individual out the lower border of the world
+        */
+        if(individual.point.y-individual.movement.v>=world.x.y) //if so the movement is possible
+            return dir;
+       return checkIfPossibleOtherwiseChange(UP,numberOfAttemps++,world,individual);    
+
+    case LEFT:
+        /*
+        the individual moves along its x coordinate by decreasing it 
+            -> check if the movement can push the individual out the left border of the world
+        */
+       if(individual.point.x-individual.movement.v>=world.x.x) //if so the movement is possible
+            return dir;
+       return checkIfPossibleOtherwiseChange(RIGHT,numberOfAttemps++,world,individual);     
+
+    case RIGHT:
+        /*
+        the individual moves along its x coordinate by increasing it 
+            -> check if the movement can push the individual out the right border of the world
+        */
+       if(individual.movement.v+individual.point.x<=world.w.x) //if so the movement is possible
+            return dir;
+       return checkIfPossibleOtherwiseChange(DOWN,numberOfAttemps++,world,individual);     
+
+    case UPLEFT:
+        /*
+        individual x -> decreased   individual y -> increased
+        */
+       if(individual.point.x-individual.movement.v>=world.x.x&&individual.movement.v+individual.point.y<=world.y.y)
+            return dir;
+       return checkIfPossibleOtherwiseChange(DOWNRIGHT,numberOfAttemps++,world,individual);
+
+    case UPRIGHT:
+        /*
+        individual x -> increased   individual y -> increased
+        */
+        if(individual.movement.v+individual.point.x<=world.w.x&&individual.movement.v+individual.point.y<=world.y.y)
+            return dir;
+        return checkIfPossibleOtherwiseChange(DOWNLEFT,numberOfAttemps++,world,individual);
+    
+    case DOWNLEFT:
+        /*
+        individual x -> decreased   individual y -> decreased
+        */
+        if(individual.point.x-individual.movement.v>=world.x.x&&individual.point.y-individual.movement.v>=world.x.y)
+            return dir;
+        return checkIfPossibleOtherwiseChange(UPRIGHT,numberOfAttemps++,world,individual);
+
+    case DOWNRIGHT:
+        /*
+        individual x -> increased   individual y -> decreased
+        */
+        if(individual.movement.v+individual.point.x<=world.w.x&&individual.point.y-individual.movement.v>=world.x.y)
+            return dir;
+        return checkIfPossibleOtherwiseChange(UPLEFT,numberOfAttemps++,world,individual);
+
+
+    default:
+        return STOP;
+    }
+    }
+
+    else return STOP; //if both direction and the oppesed direction are not possible then the individual is stooped for the round
+}
