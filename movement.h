@@ -18,6 +18,7 @@ typedef struct
 
 void updateDirection(Movement * movement);
 void updateVelocity(Movement * movement);
+Movement setInitialMovement(int speed);
 
 
 

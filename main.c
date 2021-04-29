@@ -121,7 +121,7 @@ int main(int argc, char const *argv[])
 
 // add individuals to the world
 
-    addIndividuals( world,  numOfIndividuals,  numOfInfectedIndividuals);
+    addIndividuals( world,  numOfIndividuals,  numOfInfectedIndividuals,speed);
 }
 
 
@@ -189,7 +189,7 @@ int charToInt(char c){
     return c - '0';
 }
 
-void addIndividuals(World world, int numOfIndividuals, int numOfInfectedIndividuals){
+void addIndividuals(World world, int numOfIndividuals, int numOfInfectedIndividuals,int speed){
 
     Country *country=world.countries;
     int numberOfCountries=world.numOfCountries;
@@ -211,7 +211,7 @@ void addIndividuals(World world, int numOfIndividuals, int numOfInfectedIndividu
 
                 Individual *individual;
                 if(restOfInfectedPeople<=0)
-                individual->state=healthy;
+                *individual=createHealthyIndividual(pickvaluex(country,i),pickvaluey(country,i));
     
                 else
                 {
@@ -223,6 +223,12 @@ void addIndividuals(World world, int numOfIndividuals, int numOfInfectedIndividu
                 }
 
                 addIndividual(country[i].individuals,individual);
+                Country *punCountry;
+                *punCountry=country[i];
+                individual->country=punCountry;
+                individual->movement=setInitialMovement(speed);
+
+
                 restOfPeople--;
                 amountPerCountry--;
             }
@@ -236,6 +242,33 @@ void addIndividuals(World world, int numOfIndividuals, int numOfInfectedIndividu
     }
 
 }
+
+//in order to choose a set of coordinates for the individual
+int pickvaluex(Country *country,int i){
+     /*
+        y------z 
+        |      |
+        x------w
+    */
+
+    int num = (rand() % (country[i].w.x - country[i].x.x + 1)) + country[i].x.x;
+    
+    return 0;
+}
+
+int pickvaluey(Country *country,int i){
+     /*
+        y------z 
+        |      |
+        x------w
+    */
+
+   int num = (rand() % (country[i].y.y - country[i].x.y + 1)) + country[i].x.y;
+    
+    return 0;
+}
+
+
 
 StateIndividual healthyOrSick(){
     int randomnumber = rand() % 2;
@@ -254,7 +287,6 @@ void doMovement(Individual individual,World world){
 
     //1st randomically choose a direction
     individual.movement.direction=pickADirection(world,individual);
-
 }
 
 Direction pickADirection(World world,Individual individual){
@@ -289,11 +321,41 @@ Direction pickADirection(World world,Individual individual){
 
 if(dir!=STOP)
     dir=checkIfPossibleOtherwiseChange(dir,0,world,individual);
+if(dir!=STOP)
+    checkIfCountryHasBeenChanged(individual,world);    
 return dir;
 
 }
 
+checkIfCountryHasBeenChanged(Individual individual,World world)  {
+    Country *country=individual.country;
+    Individual *in;
+    *in=individual;
+    if(individual.point.x>country->w.x||individual.point.x<country->x.x||individual.point.y>country->y.y||individual.point.y<country->x.y)
+    {
+        //then the country must be changed
+        Country *countries=getCountries(world);
+        int i=0;
+        int imax=world.numOfCountries;
+        while(i<imax){
+         if(countries[i].x.x<=individual.point.x&&countries[i].w.x>=individual.point.x||countries[i].x.y<=individual.point.y&&countries[i].y.y>=individual.point.y)
+            {
+                //then we've found the right country
+                Country *precCountry=individual.country;
+
+                removeIndividual(country->individuals, in);
+                addIndividual(countries[i].individuals,in);
+            }
+
+         i++;
+        }
+    }
+}
+
+//if the direction is possible then change the indidiual's coordinates
 Direction checkIfPossibleOtherwiseChange(Direction dir,int attempts,World world,Individual individual){
+    Individual *ind;
+    *ind=individual;
     //UP,DOWN,LEFT,RIGHT,UPLEFT,UPRIGHT,DOWNLEFT,DOWNRIGHT,
     int numberOfAttemps=attempts;
 
@@ -307,7 +369,10 @@ Direction checkIfPossibleOtherwiseChange(Direction dir,int attempts,World world,
             -> check if the movement can push the individual out the upper border of the world
         */
        if(individual.movement.v+individual.point.y<=world.y.y) //if so the movement is possible
+        {
+            setCoordinates(ind,individual.point.x,individual.point.y+individual.movement.v);
             return dir;
+        }
        return checkIfPossibleOtherwiseChange(DOWN,numberOfAttemps++,world,individual);     
             
     case DOWN:
@@ -316,7 +381,10 @@ Direction checkIfPossibleOtherwiseChange(Direction dir,int attempts,World world,
             -> check if the movement can push the individual out the lower border of the world
         */
         if(individual.point.y-individual.movement.v>=world.x.y) //if so the movement is possible
+           {
+            setCoordinates(ind,individual.point.x,individual.point.y-individual.movement.v);
             return dir;
+        }
        return checkIfPossibleOtherwiseChange(UP,numberOfAttemps++,world,individual);    
 
     case LEFT:
@@ -325,7 +393,10 @@ Direction checkIfPossibleOtherwiseChange(Direction dir,int attempts,World world,
             -> check if the movement can push the individual out the left border of the world
         */
        if(individual.point.x-individual.movement.v>=world.x.x) //if so the movement is possible
+           {
+            setCoordinates(ind,individual.point.x-individual.movement.v,individual.point.y);
             return dir;
+        }
        return checkIfPossibleOtherwiseChange(RIGHT,numberOfAttemps++,world,individual);     
 
     case RIGHT:
@@ -334,7 +405,10 @@ Direction checkIfPossibleOtherwiseChange(Direction dir,int attempts,World world,
             -> check if the movement can push the individual out the right border of the world
         */
        if(individual.movement.v+individual.point.x<=world.w.x) //if so the movement is possible
+            {
+            setCoordinates(ind,individual.movement.v+individual.point.x,individual.point.y);
             return dir;
+        }
        return checkIfPossibleOtherwiseChange(DOWN,numberOfAttemps++,world,individual);     
 
     case UPLEFT:
@@ -342,7 +416,10 @@ Direction checkIfPossibleOtherwiseChange(Direction dir,int attempts,World world,
         individual x -> decreased   individual y -> increased
         */
        if(individual.point.x-individual.movement.v>=world.x.x&&individual.movement.v+individual.point.y<=world.y.y)
+            {
+            setCoordinates(ind,individual.point.x-individual.movement.v,individual.movement.v+individual.point.y);
             return dir;
+        }
        return checkIfPossibleOtherwiseChange(DOWNRIGHT,numberOfAttemps++,world,individual);
 
     case UPRIGHT:
@@ -350,7 +427,10 @@ Direction checkIfPossibleOtherwiseChange(Direction dir,int attempts,World world,
         individual x -> increased   individual y -> increased
         */
         if(individual.movement.v+individual.point.x<=world.w.x&&individual.movement.v+individual.point.y<=world.y.y)
+            {
+            setCoordinates(ind,individual.movement.v+individual.point.x,individual.movement.v+individual.point.y);
             return dir;
+        }
         return checkIfPossibleOtherwiseChange(DOWNLEFT,numberOfAttemps++,world,individual);
     
     case DOWNLEFT:
@@ -358,7 +438,10 @@ Direction checkIfPossibleOtherwiseChange(Direction dir,int attempts,World world,
         individual x -> decreased   individual y -> decreased
         */
         if(individual.point.x-individual.movement.v>=world.x.x&&individual.point.y-individual.movement.v>=world.x.y)
+             {
+            setCoordinates(ind,individual.point.x-individual.movement.v,individual.point.y-individual.movement.v);
             return dir;
+        }
         return checkIfPossibleOtherwiseChange(UPRIGHT,numberOfAttemps++,world,individual);
 
     case DOWNRIGHT:
@@ -366,7 +449,10 @@ Direction checkIfPossibleOtherwiseChange(Direction dir,int attempts,World world,
         individual x -> increased   individual y -> decreased
         */
         if(individual.movement.v+individual.point.x<=world.w.x&&individual.point.y-individual.movement.v>=world.x.y)
+            {
+            setCoordinates(ind,individual.movement.v+individual.point.x,individual.point.y-individual.movement.v);
             return dir;
+        }
         return checkIfPossibleOtherwiseChange(UPLEFT,numberOfAttemps++,world,individual);
 
 

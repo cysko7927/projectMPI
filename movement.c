@@ -20,3 +20,13 @@ void updateDirection(Movement * movement, Direction dir)
 void updateVelocity(Movement * movement, unsigned int v)
 { movement->v=v;}
 
+/**
+ * @brief Initially all the individuals don't move
+ * @param speed speed of the movement
+ */
+Movement setInitialMovement(int speed){
+    Movement movement;
+    movement.direction=STOP;
+    movement.v=speed;
+}
+
