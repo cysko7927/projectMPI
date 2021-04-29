@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <world.h>
 #include <country.h>
 
@@ -24,15 +25,15 @@ int main(int argc, char const *argv[])
         return 0;
         }
 
-    int numOfIndividuals=charToInt(argv[0]);
-    int numOfInfectedIndividuals=charToInt(argv[1]);
-    int worldHeight=charToInt(argv[2]);
-    int worldWidht=charToInt(argv[3]);
-    int countryHeight=charToInt(argv[4]);
-    int countryWidht=charToInt(argv[5]);
-    int speed=charToInt(argv[6]);
-    int maxDistance=charToInt(argv[7]);
-    int time=charToInt(argv[8]);
+    int numOfIndividuals=atoi(argv[0]);
+    int numOfInfectedIndividuals=atoi(argv[1]);
+    int worldHeight=atoi(argv[2]);
+    int worldWidht=atoi(argv[3]);
+    int countryHeight=atoi(argv[4]);
+    int countryWidht=atoi(argv[5]);
+    int speed=atoi(argv[6]);
+    int maxDistance=atoi(argv[7]);
+    int time=atoi(argv[8]);
     
 
     if(numOfIndividuals<0||
@@ -185,9 +186,6 @@ return createWorld(x,y,z,w,countries,numOfCountries);
 
 
 
-int charToInt(char c){
-    return c - '0';
-}
 
 void addIndividuals(World world, int numOfIndividuals, int numOfInfectedIndividuals,int speed){
 
