@@ -1,6 +1,7 @@
+#include <stdio.h>
 #include "country.h"
 #include "world.h"
-#include <stdio.h>
+
 
 /**
  * @brief Create the map of the world
@@ -8,9 +9,10 @@
  * @param countries contains all the countries that have to be added to the world
  * @return map
  */
-World createWorld(Point x,Point y,Point z,Point w,Country *countries,int numOfCountries)
+void createWorld(struct Point x,struct Point y,struct Point z,
+    struct Point w,struct Country *countries,int numOfCountries,struct World world)
 {
-    World world;
+    
 
     world.x=x;
     world.y=y;
@@ -19,10 +21,18 @@ World createWorld(Point x,Point y,Point z,Point w,Country *countries,int numOfCo
     world.countries=countries;
     world.numOfCountries=numOfCountries;
 
-    return world;
+    
 }
 
-Country *getCountries(World world){
+struct Country *getCountries(struct World world){
     return world.countries;
 }
 
+void printWorld(struct World world){
+   printf(
+
+       "world coordinates :\n x=( %d,%d) , y=(%d,%d), w=(%d,%d), z=(%d,%d)",
+            &world.x.x,&world.x.y,&world.y.x,&world.y.y,&world.w.x,&world.w.y,&world.z.x,&world.z.y
+   );
+    
+}

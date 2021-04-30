@@ -1,31 +1,31 @@
-#include "country.h"
 #include <stdio.h>
-#include<individual.h>
+#include "country.h"
+#include "individual.h"
 
 /**
  * @brief Create a country on the map 
  * @param x,y,z,w vertix of the country
  * @return country 
  */
-Country addCountry(Point x,Point y,Point z,Point w,int name)
+struct Country addCountry(struct Point x,struct Point y,struct Point z,struct Point w,int name)
 {
-    Country country;
+    struct Country country;
 
     country.x=x;
     country.y=y;
     country.w=w;
     country.z=z;
     country.name=name;
-    IndividualNode *node;
+    struct IndividualNode *node;
     node->individual=NULL;
     node->next=NULL;
     country.individuals=node;
     return country;
 }
 
-void addIndividual(IndividualNode *individuals,Individual *individual){
+void addIndividual(struct IndividualNode *individuals,struct Individual *individual){
 
-IndividualNode *newIndividual=(IndividualNode*)malloc(sizeof(IndividualNode));
+struct IndividualNode *newIndividual=(struct IndividualNode*)malloc(sizeof(struct IndividualNode));
 if(newIndividual==NULL){
     printf("Unable to allocate memory for the new node");
     return;
@@ -42,7 +42,7 @@ if(individuals->individual == NULL){
     }
     else
     {
-        IndividualNode *current = individuals;
+        struct IndividualNode *current = individuals;
         while(current->next != NULL)
         {
         current = current->next;
@@ -57,9 +57,9 @@ if(individuals->individual == NULL){
     
 }
 
-void removeIndividual(IndividualNode *individuals,Individual *individual){
+void removeIndividual(struct IndividualNode *individuals,struct Individual *individual){
 
-     IndividualNode *cur=individuals;
+     struct IndividualNode *cur=individuals;
 
      if(individuals==NULL||individuals->individual==NULL)
         return;
@@ -80,9 +80,9 @@ void removeIndividual(IndividualNode *individuals,Individual *individual){
 else if(individuals->individual!=individual && individuals->next == NULL) {
       return;
 }
-    IndividualNode *current;
-    IndividualNode *prev;
-    IndividualNode *hop;
+    struct IndividualNode *current;
+    struct IndividualNode *prev;
+    struct IndividualNode *hop;
     current= individuals;
    
    while(current->next != NULL && (current->individual!=individual)) {

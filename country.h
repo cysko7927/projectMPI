@@ -2,41 +2,37 @@
 #define COUNTRY
 
 #include <stdio.h>
-#include <point.h>
-#include <individual.h>
+#include "point.h"
+#include "individual.h"
 
 
-typedef struct 
+struct Country
 {
-
     /*
         y--------z
         |        |
         x--------w
     */
-
-    Point x;
-    Point y;
-    Point z;
-    Point w;               
-
+    struct Point x;
+    struct Point y;
+    struct Point z;
+    struct Point w;               
     int name;
-
-    IndividualNode *individuals;
+    struct IndividualNode *individuals;
     
-} Country;
+} ;
 
-typedef struct {
-    Individual *individual;
-    IndividualNode *next;
+ struct IndividualNode{
+    struct Individual *individual;
+    struct IndividualNode *next;
 
-}IndividualNode;
+};
 
 
-Country addCountry(Point x,Point y,Point z,Point w,int name);
+struct Country addCountry(struct Point x,struct Point y,struct Point z,struct Point w,int name);
 
-void addIndividual(IndividualNode *individuals,Individual *individual);
+void addIndividual(struct IndividualNode *individuals,struct Individual *individual);
 
-void removeIndividual(IndividualNode *individuals,Individual *individual);
+void removeIndividual(struct IndividualNode *individuals,struct Individual *individual);
 
 #endif

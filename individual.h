@@ -18,23 +18,23 @@ typedef enum
     immune
 } StateIndividual;
 
-typedef struct 
+ struct Individual
 {
-    Point point;
+    struct Point point;
     unsigned int counter;
     StateIndividual state;
-    Movement movement;
-    Country *country;
-} Individual;
+    struct Movement movement;
+    struct Country *country;
+} ;
 
 
-void updateState(unsigned int neighbors, Individual * individual);
+void updateState(unsigned int neighbors,  struct Individual * individual);
 
-void updateCountry(Individual *individual, Country *newCountry);//todo fare implementazione
+void updateCountry(struct Individual *individual, struct Country *newCountry);//todo fare implementazione
 
-Individual createHealthyIndividual(int x,int y);
+struct Individual createHealthyIndividual(int x,int y);
 
-void setCoordinates(Individual *individual,int x,int y);
+void setCoordinates(struct Individual *individual,int x,int y);
 
 
 

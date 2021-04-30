@@ -4,16 +4,16 @@
 #include <stdio.h>
 
 
-typedef struct 
+ struct Point
 {
     unsigned int x;
     unsigned int y;
     
-} Point;
+} ;
 
 
 
-Point buildPoint(int x,int y);
+struct Point buildPoint(int x,int y);
 
 
 #endif
