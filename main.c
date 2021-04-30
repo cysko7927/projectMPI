@@ -19,22 +19,25 @@ int main(int argc, char const *argv[])
             // t
 
 //-----------------------------------------------  check on the parameters --------------------------------------//
+    
 
-    if(argc!=9){   
+
+
+    if(argc!=10){   
         printf("Please insert the required parameters");
         return 0;
         }
 
-    int numOfIndividuals=atoi(argv[0]);
-    int numOfInfectedIndividuals=atoi(argv[1]);
-    int worldHeight=atoi(argv[2]);
-    int worldWidht=atoi(argv[3]);
-    int countryHeight=atoi(argv[4]);
-    int countryWidht=atoi(argv[5]);
-    int speed=atoi(argv[6]);
-    int maxDistance=atoi(argv[7]);
-    int time=atoi(argv[8]);
     
+    int numOfIndividuals=*argv[1]-'0';
+    int numOfInfectedIndividuals=*argv[2]-'0';
+    int worldHeight=*argv[3]-'0';
+    int worldWidht=*argv[4]-'0';
+    int countryHeight=*argv[5]-'0';
+    int countryWidht=*argv[6]-'0';
+    int speed=*argv[7]-'0';
+    int maxDistance=*argv[8]-'0';
+    int time=*argv[9]-'0';
 
     if(numOfIndividuals<0||
         numOfInfectedIndividuals<0||
@@ -119,15 +122,17 @@ int main(int argc, char const *argv[])
 // creation of the world        
   struct World world;
   
-  buildWorld(world,worldWidht,worldHeight,numOfCountries,countryWidht,countryHeight);
-  printWorld(world);
+  buildWorld(&world,worldWidht,worldHeight,numOfCountries,countryWidht,countryHeight);
+
+  printWorld(world); //---- just debugging purpose to be deleted later on
+  printCountries(world);
 // add individuals to the world
 
-   addIndividuals(world, numOfIndividuals,  numOfInfectedIndividuals,speed);
+  // addIndividuals(world, numOfIndividuals,  numOfInfectedIndividuals,speed);
 }
 
 
-void  buildWorld(struct World world,int worldWidht,int worldHeight,int numOfCountries,int countryWidht,int countryHeight){
+void  buildWorld(struct World *world,int worldWidht,int worldHeight,int numOfCountries,int countryWidht,int countryHeight){
 
      /*
         y--------z  
@@ -152,10 +157,11 @@ countries=malloc(numOfCountries*sizeof(struct Country));
 int widhtOccupied=0; // the value of the widht covered by the countries placed on the map
 int heightOccupied=0;  // the value of the height covered by the countries placed on the map
 
-
+struct Point xp,wp,yp,zp;
 
    
    for(int i=0;i<numOfCountries;i++){
+
 
        if(widhtOccupied+countryWidht>worldWidht)
        {
@@ -170,18 +176,19 @@ int heightOccupied=0;  // the value of the height covered by the countries place
        }
 
 
+        xp= buildPoint(widhtOccupied,heightOccupied);
+        yp= buildPoint(widhtOccupied,heightOccupied+countryHeight);
+        wp= buildPoint(widhtOccupied+countryWidht,heightOccupied);
+        zp= buildPoint(widhtOccupied+countryWidht,heightOccupied+countryHeight); 
 
-        x= buildPoint(widhtOccupied,heightOccupied);
-        y= buildPoint(widhtOccupied,heightOccupied+countryHeight);
-        w= buildPoint(widhtOccupied+countryWidht,heightOccupied);
-        z= buildPoint(widhtOccupied+countryWidht,heightOccupied+countryHeight); 
-
-        countries[i]=addCountry(x,y,z,w,i);
+        addCountry(xp,yp,zp,wp,i,&countries[i]);
+        widhtOccupied=widhtOccupied+countryWidht;
     }
 
-
-
+   
  createWorld(x,y,z,w,countries,numOfCountries, world);
+
+ 
 
 }
 

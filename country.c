@@ -7,20 +7,20 @@
  * @param x,y,z,w vertix of the country
  * @return country 
  */
-struct Country addCountry(struct Point x,struct Point y,struct Point z,struct Point w,int name)
+void addCountry(struct Point x,struct Point y,struct Point z,struct Point w,int name,struct Country *country)
 {
-    struct Country country;
+   // struct Country country;
 
-    country.x=x;
-    country.y=y;
-    country.w=w;
-    country.z=z;
-    country.name=name;
-    struct IndividualNode *node;
+    country->x=x;
+    country->y=y;
+    country->w=w;
+    country->z=z;
+    country->name=name;
+    struct IndividualNode *node=malloc(sizeof(struct IndividualNode));
     node->individual=NULL;
     node->next=NULL;
-    country.individuals=node;
-    return country;
+    country->individuals=node;
+    
 }
 
 void addIndividual(struct IndividualNode *individuals,struct Individual *individual){
@@ -96,5 +96,29 @@ else if(individuals->individual!=individual && individuals->next == NULL) {
       free(current);
    } 
      
+
+}
+
+void printIndividuals(struct IndividualNode *individuals){
+    if(individuals==NULL||individuals->individual==NULL)
+        {
+            printf("no individual");
+            return;
+        }
+
+       printf("\nstate: %d\nx: %d\ny: %d\n#: %d\n",(int) individuals->individual->state,
+       individuals->individual->point.x,
+       individuals->individual->point.y,
+       individuals->individual->country->name);
+    
+    while(individuals->next!=NULL){
+    printf("\nstate: %d\nx: %d\ny: %d\n#: %d\n",(int) individuals->next->individual->state,
+       individuals->next->individual->point.x,
+       individuals->next->individual->point.y,
+       individuals->next->individual->country->name);
+
+       individuals->next=individuals->next->next;
+    }
+
 
 }
