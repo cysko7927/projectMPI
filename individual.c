@@ -22,6 +22,19 @@ struct Individual createHealthyIndividual(int x,int y)
     return individual;
 }
 
+struct Individual createInfectedIndividual(int x,int y)
+{
+    struct Individual individual;
+
+    individual.point.x = x;
+    individual.point.y = y;
+    individual.counter = 0;
+    individual.state = infected;
+    
+
+    return individual;
+}
+
 /**
  * @brief update the state of an individual based on its internal state 
  * and the number of its infected neighbors

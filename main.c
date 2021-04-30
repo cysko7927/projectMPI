@@ -128,7 +128,16 @@ int main(int argc, char const *argv[])
   printCountries(world);
 // add individuals to the world
 
-  // addIndividuals(world, numOfIndividuals,  numOfInfectedIndividuals,speed);
+ addIndividuals(&world, numOfIndividuals,  numOfInfectedIndividuals,speed);
+  for(int i=0; i<world.numOfCountries;i++){
+
+      struct Country country=getCountries(world)[i];
+ 
+      printf("\nCountry #%d - individuals:\n",i);
+      printIndividuals(country.individuals);
+  }
+  
+  
 }
 
 
@@ -195,10 +204,10 @@ struct Point xp,wp,yp,zp;
 
 
 
-void addIndividuals(struct World world, int numOfIndividuals, int numOfInfectedIndividuals,int speed){
+void addIndividuals(struct World*world, int numOfIndividuals, int numOfInfectedIndividuals,int speed){
 
-    struct Country *country=world.countries;
-    int numberOfCountries=world.numOfCountries;
+   
+    int numberOfCountries=world->numOfCountries;
     int i=0;
     int restOfPeople=numOfIndividuals;
     int restOfInfectedPeople=numOfInfectedIndividuals;
@@ -216,30 +225,45 @@ void addIndividuals(struct World world, int numOfIndividuals, int numOfInfectedI
             if(restOfPeople>0){
 
                 struct Individual *individual;
+                individual=malloc(sizeof(struct Individual));
                 if(restOfInfectedPeople<=0)
-                *individual=createHealthyIndividual(pickvaluex(country,i),pickvaluey(country,i));
+                *individual=createHealthyIndividual(pickvaluex(world->countries,i),pickvaluey(world->countries,i));
+                
     
                 else
                 {
                     //choose if the individual is healthy
                     healthyOrSick(individual);
                     //if the individual is infected we've to decrease the number of infected that needs to be placed
-                    if(individual->state==infected)
+                    if(individual->state==infected){
+                        *individual=createInfectedIndividual(pickvaluex(world->countries,i),pickvaluey(world->countries,i));
+                
                         restOfInfectedPeople--;
+                    
+                    }
+                    else
+                        *individual=createHealthyIndividual(pickvaluex(world->countries,i),pickvaluey(world->countries,i));
+                
                 }
 
-                addIndividual(country[i].individuals,individual);
-               struct  Country *punCountry;
-                *punCountry=country[i];
+                
+
+               addIndividual(world->countries[i].individuals,individual);
+               struct  Country *punCountry=malloc(sizeof(struct Country));
+                *punCountry=world->countries[i];
                 individual->country=punCountry;
                 individual->movement=setInitialMovement(speed);
 
 
                 restOfPeople--;
                 amountPerCountry--;
+
+                
             }
 
-            else return; //all the individuals have been distributed
+
+            else return;
+             //all the individuals have been distributed
 
         }
 

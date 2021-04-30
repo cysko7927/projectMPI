@@ -37,22 +37,27 @@ newIndividual->next=NULL;
 
 
 if(individuals->individual == NULL){
-        individuals->individual = newIndividual;
+    
+        individuals->individual=malloc(sizeof(struct Individual));
+        individuals->individual=individual;
         individuals->next=NULL;
     }
-    else
+    
+else
     {
-        struct IndividualNode *current = individuals;
+        
+        struct IndividualNode *current = malloc(sizeof(struct IndividualNode));
+        current=individuals;
         while(current->next != NULL)
         {
         current = current->next;
         }
+        current->next=malloc(sizeof(struct IndividualNode));
       
         current->next = newIndividual;
                
             
     }
-
 
     
 }
@@ -122,3 +127,4 @@ void printIndividuals(struct IndividualNode *individuals){
 
 
 }
+
