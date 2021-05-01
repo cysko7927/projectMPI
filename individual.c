@@ -136,3 +136,14 @@ void updateCountry(struct Individual *individual, struct Country *newCountry)
 
 
 }
+void printIndividual(struct Individual *individual){
+   
+       printf("\nstampa singola\nstate: %d\nx: %d\ny: %d\n#: %d\n",(int) individual->state,
+       individual->point.x,
+       individual->point.y,
+       individual->country->name);
+    
+  
+
+
+}

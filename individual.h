@@ -36,6 +36,7 @@ struct Individual createHealthyIndividual(int x,int y);
 struct Individual createInfectedIndividual(int x,int y);
 
 void setCoordinates(struct Individual *individual,int x,int y);
+void printIndividual(struct Individual *individual);
 
 
 

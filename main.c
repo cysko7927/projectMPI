@@ -210,6 +210,7 @@ void addIndividuals(struct World*world, int numOfIndividuals, int numOfInfectedI
     int numberOfCountries=world->numOfCountries;
     int i=0;
     int restOfPeople=numOfIndividuals;
+    int restOfHealthyPeople=numOfIndividuals-numOfInfectedIndividuals;
     int restOfInfectedPeople=numOfInfectedIndividuals;
     int amountPerCountry;
 
@@ -217,8 +218,11 @@ void addIndividuals(struct World*world, int numOfIndividuals, int numOfInfectedI
     while (i<=numberOfCountries && restOfPeople>0)
     {
         //in order to distribute the individuals around the world
-        amountPerCountry=getAmountPerCountry(restOfPeople);
-        
+        if(i<numberOfCountries-1)
+            amountPerCountry=getAmountPerCountry(restOfPeople);
+        else
+            amountPerCountry=restOfPeople;
+        printf("amount #%d : %d\n",i,amountPerCountry);
         //in order to place individuals inside the designated country
         while(amountPerCountry>0){
 
@@ -228,22 +232,24 @@ void addIndividuals(struct World*world, int numOfIndividuals, int numOfInfectedI
                 individual=malloc(sizeof(struct Individual));
                 if(restOfInfectedPeople<=0)
                 *individual=createHealthyIndividual(pickvaluex(world->countries,i),pickvaluey(world->countries,i));
-                
+               
     
                 else
                 {
-                    //choose if the individual is healthy
-                    healthyOrSick(individual);
+                    //to choose if the individual is healthy
+                    int bool=healthyOrSick(restOfHealthyPeople,restOfInfectedPeople);
                     //if the individual is infected we've to decrease the number of infected that needs to be placed
-                    if(individual->state==infected){
+                    if(bool==1){
+                        individual->state==infected;
                         *individual=createInfectedIndividual(pickvaluex(world->countries,i),pickvaluey(world->countries,i));
                 
                         restOfInfectedPeople--;
                     
                     }
-                    else
+                    else{
                         *individual=createHealthyIndividual(pickvaluex(world->countries,i),pickvaluey(world->countries,i));
-                
+                        restOfHealthyPeople--;
+                    }
                 }
 
                 
@@ -257,7 +263,8 @@ void addIndividuals(struct World*world, int numOfIndividuals, int numOfInfectedI
 
                 restOfPeople--;
                 amountPerCountry--;
-
+                
+                
                 
             }
 
@@ -283,7 +290,7 @@ int pickvaluex(struct Country *country,int i){
 
     int num = (rand() % (country[i].w.x - country[i].x.x + 1)) + country[i].x.x;
     
-    return 0;
+    return num;
 }
 
 int pickvaluey(struct Country *country,int i){
@@ -295,20 +302,23 @@ int pickvaluey(struct Country *country,int i){
 
    int num = (rand() % (country[i].y.y - country[i].x.y + 1)) + country[i].x.y;
     
-    return 0;
+    return num;
 }
 
 
 
-void healthyOrSick( struct Individual* individual){
+int healthyOrSick(int healthyToAssign,int sickToAssign){
+    if(healthyToAssign==0) //can't have other healthy individuals
+        return 1;
+    if(sickToAssign==0)//can't have other infected individuals
+        return 0;
     int randomnumber = rand() % 2;
-    if(randomnumber==0){
-        individual->state=healthy;
-    }
-   individual->state=infected;
+    
+    return randomnumber;
 }
 
 int getAmountPerCountry(restOfPeople){
+    
     int randomnumber = rand() % restOfPeople;
     return randomnumber;
 }
@@ -353,6 +363,9 @@ if(dir!=STOP)
 
 }
 
+
+//nb if the individual is on the line between two countries it doesn't change its country value
+// until it doesn't surpass the line
 checkIfCountryHasBeenChanged(struct Individual individual,struct World world)  {
     struct Country *country=individual.country;
     struct Individual *in;
