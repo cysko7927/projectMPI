@@ -19,6 +19,7 @@ typedef enum
 void updateDirection(struct Movement * movement,Direction dir);
 void updateVelocity(struct Movement * movement,int v);
 struct Movement setInitialMovement(int speed);
+void printDirection(Direction dir);
 
 
 

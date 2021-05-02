@@ -131,7 +131,7 @@ void updateCountry(struct Individual *individual, struct Country *newCountry)
 {
     removeIndividual(individual->country->individuals,individual); // remove the individual from the list inside the old country
     individual->country = newCountry;//Update the reference to the country inside the individual
-
+   
     addIndividual(newCountry->individuals,individual); //Add the individual in the list inside the new country
 
 

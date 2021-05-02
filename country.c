@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "country.h"
 #include "individual.h"
 
@@ -35,8 +36,15 @@ if(newIndividual==NULL){
 newIndividual->individual=individual;
 newIndividual->next=NULL;
 
+if(individuals==NULL){
+    individuals=malloc(sizeof(struct IndividualNode));
+    individuals->individual=malloc(sizeof(struct Individual));
+        individuals->individual=individual;
+        individuals->next=NULL;
+}
 
-if(individuals->individual == NULL){
+
+else if(individuals->individual == NULL){
     
         individuals->individual=malloc(sizeof(struct Individual));
         individuals->individual=individual;
@@ -45,16 +53,16 @@ if(individuals->individual == NULL){
     
 else
     {
-        
+       
         struct IndividualNode *current = malloc(sizeof(struct IndividualNode));
         current=individuals;
         while(current->next != NULL)
-        {
-        current = current->next;
-        }
-        current->next=malloc(sizeof(struct IndividualNode));
+            current = current->next;
+        
+        current->next=newIndividual;
       
-        current->next = newIndividual;
+       
+        
                
             
     }
@@ -68,8 +76,7 @@ void removeIndividual(struct IndividualNode *individuals,struct Individual *indi
 
      if(individuals==NULL||individuals->individual==NULL)
         return;
-   
-
+  
     if(individuals->individual==individual)
         {
             if (individuals->next!=NULL){
@@ -77,17 +84,18 @@ void removeIndividual(struct IndividualNode *individuals,struct Individual *indi
                 return ;
             }
             else{
-                individuals->individual=NULL;
+                individuals=NULL;
                 return;
             }
 
-        }
+        } 
+
 else if(individuals->individual!=individual && individuals->next == NULL) {
       return;
 }
-    struct IndividualNode *current;
-    struct IndividualNode *prev;
-    struct IndividualNode *hop;
+    struct IndividualNode *current=malloc(sizeof (struct IndividualNode));
+    struct IndividualNode *prev=malloc(sizeof (struct IndividualNode));
+    struct IndividualNode *hop=malloc(sizeof (struct IndividualNode));
     current= individuals;
    
    while(current->next != NULL && (current->individual!=individual)) {

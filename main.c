@@ -123,9 +123,9 @@ int main(int argc, char const *argv[])
   struct World world;
   
   buildWorld(&world,worldWidht,worldHeight,numOfCountries,countryWidht,countryHeight);
-
-  printWorld(world); //---- just debugging purpose to be deleted later on
-  printCountries(world);
+ printWorld(world); 
+ printCountries(world); 
+ 
 // add individuals to the world
 
  addIndividuals(&world, numOfIndividuals,  numOfInfectedIndividuals,speed);
@@ -135,6 +135,15 @@ int main(int argc, char const *argv[])
  
       printf("\nCountry #%d - individuals:\n",i);
       printIndividuals(country.individuals);
+  }
+  
+  for(int i=0;i<numOfCountries;i++){
+      while(world.countries[i].individuals!=NULL&&world.countries[i].individuals->individual!=NULL) {
+         doMovement(world.countries[i].individuals->individual,world);
+          printIndividual(world.countries[i].individuals->individual);
+        printDirection(world.countries[i].individuals->individual->movement.direction);
+          world.countries[i].individuals=world.countries[i].individuals->next;
+      }
   }
   
   
@@ -324,7 +333,7 @@ int getAmountPerCountry(restOfPeople){
 }
 
 
-void doMovement(struct Individual individual,struct World world){
+void doMovement(struct Individual *individual,struct World world){
 
 
  Direction dir;
@@ -366,23 +375,22 @@ if(dir!=STOP)
 
 //nb if the individual is on the line between two countries it doesn't change its country value
 // until it doesn't surpass the line
-checkIfCountryHasBeenChanged(struct Individual individual,struct World world)  {
-    struct Country *country=individual.country;
-    struct Individual *in;
-    *in=individual;
-    if(individual.point.x>country->w.x||individual.point.x<country->x.x||individual.point.y>country->y.y||individual.point.y<country->x.y)
+checkIfCountryHasBeenChanged(struct Individual *individual,struct World world)  {
+    struct Country *country=individual->country;
+    if(individual->point.x>country->w.x||individual->point.x<country->x.x||individual->point.y>country->y.y||individual->point.y<country->x.y)
     {
         //then the country must be changed
         struct Country *countries=getCountries(world);
         int i=0;
         int imax=world.numOfCountries;
         while(i<imax){
-         if(countries[i].x.x<=individual.point.x&&countries[i].w.x>=individual.point.x||countries[i].x.y<=individual.point.y&&countries[i].y.y>=individual.point.y)
+         if(countries[i].x.x<=individual->point.x&&countries[i].w.x>=individual->point.x||countries[i].x.y<=individual->point.y&&countries[i].y.y>=individual->point.y)
             {
                 //then we've found the right country
-                struct Country *newCountry;
+                struct Country *newCountry=malloc(sizeof(struct Country));
                 *newCountry=countries[i];
-                updateCountry(in,newCountry);
+                updateCountry(individual,&world.countries[i]);
+               
 
         
             }
@@ -393,9 +401,7 @@ checkIfCountryHasBeenChanged(struct Individual individual,struct World world)  {
 }
 
 //if the direction is possible then change the indidiual's coordinates
-void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World world,struct Individual individual){
-    struct Individual *ind;
-    *ind=individual;
+void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World world,struct Individual *individual){
     //UP,DOWN,LEFT,RIGHT,UPLEFT,UPRIGHT,DOWNLEFT,DOWNRIGHT,
     int numberOfAttemps=attempts;
 
@@ -408,10 +414,10 @@ void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World wor
         the individual moves along its y coordinate by increasing it 
             -> check if the movement can push the individual out the upper border of the world
         */
-       if(individual.movement.v+individual.point.y<=world.y.y) //if so the movement is possible
+       if(individual->movement.v+individual->point.y<=world.y.y) //if so the movement is possible
         {
-            individual.movement.direction=dir;
-            setCoordinates(ind,individual.point.x,individual.point.y+individual.movement.v);
+            individual->movement.direction=dir;
+            setCoordinates(individual,individual->point.x,individual->point.y+individual->movement.v);
             return;
         }
        return checkIfPossibleOtherwiseChange(DOWN,numberOfAttemps++,world,individual);     
@@ -421,10 +427,10 @@ void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World wor
         the individual moves along its y coordinate by decreasing it 
             -> check if the movement can push the individual out the lower border of the world
         */
-        if(individual.point.y-individual.movement.v>=world.x.y) //if so the movement is possible
+        if(individual->point.y-individual->movement.v>=world.x.y) //if so the movement is possible
            {
-            individual.movement.direction=dir;
-            setCoordinates(ind,individual.point.x,individual.point.y-individual.movement.v);
+            individual->movement.direction=dir;
+            setCoordinates(individual,individual->point.x,individual->point.y-individual->movement.v);
             return;
         }
        return checkIfPossibleOtherwiseChange(UP,numberOfAttemps++,world,individual);    
@@ -434,10 +440,10 @@ void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World wor
         the individual moves along its x coordinate by decreasing it 
             -> check if the movement can push the individual out the left border of the world
         */
-       if(individual.point.x-individual.movement.v>=world.x.x) //if so the movement is possible
+       if(individual->point.x-individual->movement.v>=world.x.x) //if so the movement is possible
            {
-            individual.movement.direction=dir;
-            setCoordinates(ind,individual.point.x-individual.movement.v,individual.point.y);
+            individual->movement.direction=dir;
+            setCoordinates(individual,individual->point.x-individual->movement.v,individual->point.y);
             return;
         }
        return checkIfPossibleOtherwiseChange(RIGHT,numberOfAttemps++,world,individual);     
@@ -447,10 +453,10 @@ void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World wor
         the individual moves along its x coordinate by increasing it 
             -> check if the movement can push the individual out the right border of the world
         */
-       if(individual.movement.v+individual.point.x<=world.w.x) //if so the movement is possible
+       if(individual->movement.v+individual->point.x<=world.w.x) //if so the movement is possible
             {
-            individual.movement.direction=dir;
-            setCoordinates(ind,individual.movement.v+individual.point.x,individual.point.y);
+            individual->movement.direction=dir;
+            setCoordinates(individual,individual->movement.v+individual->point.x,individual->point.y);
             return;
         }
        return checkIfPossibleOtherwiseChange(DOWN,numberOfAttemps++,world,individual);     
@@ -459,10 +465,10 @@ void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World wor
         /*
         individual x -> decreased   individual y -> increased
         */
-       if(individual.point.x-individual.movement.v>=world.x.x&&individual.movement.v+individual.point.y<=world.y.y)
+       if(individual->point.x-individual->movement.v>=world.x.x&&individual->movement.v+individual->point.y<=world.y.y)
             {
-            individual.movement.direction=dir;
-            setCoordinates(ind,individual.point.x-individual.movement.v,individual.movement.v+individual.point.y);
+            individual->movement.direction=dir;
+            setCoordinates(individual,individual->point.x-individual->movement.v,individual->movement.v+individual->point.y);
             return;
         }
        return checkIfPossibleOtherwiseChange(DOWNRIGHT,numberOfAttemps++,world,individual);
@@ -471,10 +477,10 @@ void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World wor
         /*
         individual x -> increased   individual y -> increased
         */
-        if(individual.movement.v+individual.point.x<=world.w.x&&individual.movement.v+individual.point.y<=world.y.y)
+        if(individual->movement.v+individual->point.x<=world.w.x&&individual->movement.v+individual->point.y<=world.y.y)
             {
-            individual.movement.direction=dir;
-            setCoordinates(ind,individual.movement.v+individual.point.x,individual.movement.v+individual.point.y);
+            individual->movement.direction=dir;
+            setCoordinates(individual,individual->movement.v+individual->point.x,individual->movement.v+individual->point.y);
             return;
         }
         return checkIfPossibleOtherwiseChange(DOWNLEFT,numberOfAttemps++,world,individual);
@@ -483,10 +489,10 @@ void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World wor
         /*
         individual x -> decreased   individual y -> decreased
         */
-        if(individual.point.x-individual.movement.v>=world.x.x&&individual.point.y-individual.movement.v>=world.x.y)
+        if(individual->point.x-individual->movement.v>=world.x.x&&individual->point.y-individual->movement.v>=world.x.y)
              {
-            individual.movement.direction=dir;
-            setCoordinates(ind,individual.point.x-individual.movement.v,individual.point.y-individual.movement.v);
+            individual->movement.direction=dir;
+            setCoordinates(individual,individual->point.x-individual->movement.v,individual->point.y-individual->movement.v);
             return;
         }
         return checkIfPossibleOtherwiseChange(UPRIGHT,numberOfAttemps++,world,individual);
@@ -495,19 +501,19 @@ void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World wor
         /*
         individual x -> increased   individual y -> decreased
         */
-        if(individual.movement.v+individual.point.x<=world.w.x&&individual.point.y-individual.movement.v>=world.x.y)
+        if(individual->movement.v+individual->point.x<=world.w.x&&individual->point.y-individual->movement.v>=world.x.y)
             {
-            individual.movement.direction=dir;
-            setCoordinates(ind,individual.movement.v+individual.point.x,individual.point.y-individual.movement.v);
+            individual->movement.direction=dir;
+            setCoordinates(individual,individual->movement.v+individual->point.x,individual->point.y-individual->movement.v);
             return;
         }
         return checkIfPossibleOtherwiseChange(UPLEFT,numberOfAttemps++,world,individual);
 
 
-    default:individual.movement.direction=STOP;
+    default:individual->movement.direction=STOP;
         return;
     }
     }
 
-    else individual.movement.direction=STOP; //if both direction and the oppesed direction are not possible then the individual is stooped for the round
+    else individual->movement.direction=STOP; //if both direction and the oppesed direction are not possible then the individual is stooped for the round
 }
