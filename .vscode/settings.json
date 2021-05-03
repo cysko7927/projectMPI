@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "country.h": "c",
-        "world.h": "c"
+        "world.h": "c",
+        "stdio.h": "c"
     }
 }
