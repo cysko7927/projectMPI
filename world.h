@@ -2,29 +2,32 @@
 #define WORLD
 
 #include <stdio.h>
-#include <country.h>
-#include <point.h>
+#include "country.h"
+#include "point.h"
 
-typedef struct 
+ struct World
 {
     /*
         y--------z
         |        |
         x--------w
     */
-    Point x;
-    Point y;
-    Point z;
-    Point w;
-    Country  *countries;
+    struct Point x;
+    struct Point y;
+    struct Point z;
+    struct Point w;
+    struct Country  *countries;
     int numOfCountries;
     
-} World;
+} ;
 
 
 
-World createWorld(Point x,Point y,Point z,Point w,Country *countries,int numOfCountries);
-Country *getCountries(World world);
+void createWorld(struct Point x,struct Point y,struct Point z,
+struct Point w,struct Country *countries,int numOfCountries,struct World *world);
+struct Country *getCountries(struct World world);
+void printWorld(struct World world);
+void printCountries(struct World world);
 
 
 #endif

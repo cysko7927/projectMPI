@@ -1,5 +1,6 @@
-#include "individual.h"
 #include <stdio.h>
+#include "individual.h"
+
 
 /**
  * @brief Create a Healthy Individual located in a point of the rectangle 
@@ -8,14 +9,27 @@
  * @param y height in the rectangle
  * @return Individual created
  */
-Individual createHealthyIndividual(int x,int y)
+struct Individual createHealthyIndividual(int x,int y)
 {
-    Individual individual;
+    struct Individual individual;
 
     individual.point.x = x;
     individual.point.y = y;
     individual.counter = 0;
     individual.state = healthy;
+    
+
+    return individual;
+}
+
+struct Individual createInfectedIndividual(int x,int y)
+{
+    struct Individual individual;
+
+    individual.point.x = x;
+    individual.point.y = y;
+    individual.counter = 0;
+    individual.state = infected;
     
 
     return individual;
@@ -28,7 +42,7 @@ Individual createHealthyIndividual(int x,int y)
  * @param neighborsInfected number of the infected close to the individual 
  * @param individual pointer to the individual with the state to update
  */
-void updateState(unsigned int neighborsInfected, Individual * individual)
+void updateState(unsigned int neighborsInfected, struct Individual * individual)
 {
     switch (individual->state)
     {
@@ -101,7 +115,7 @@ void updateState(unsigned int neighborsInfected, Individual * individual)
  * @param x base in the rectangle
  * @param y height in the rectangle
  */
-void setCoordinates(Individual *individual, int x,int y)
+void setCoordinates(struct Individual *individual, int x,int y)
 {
     individual->point.x = x;
     individual->point.y = y;
@@ -113,12 +127,23 @@ void setCoordinates(Individual *individual, int x,int y)
  * @param individual individual to move in an other country
  * @param newCountry country where the individual is moved
  */
-void updateCountry(Individual *individual, Country *newCountry)
+void updateCountry(struct Individual *individual, struct Country *newCountry)
 {
     removeIndividual(individual->country->individuals,individual); // remove the individual from the list inside the old country
     individual->country = newCountry;//Update the reference to the country inside the individual
-
+   
     addIndividual(newCountry->individuals,individual); //Add the individual in the list inside the new country
+
+
+}
+void printIndividual(struct Individual *individual){
+   
+       printf("\nstampa singola\nstate: %d\nx: %d\ny: %d\n#: %d\n",(int) individual->state,
+       individual->point.x,
+       individual->point.y,
+       individual->country->name);
+    
+  
 
 
 }

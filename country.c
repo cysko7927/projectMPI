@@ -1,31 +1,32 @@
-#include "country.h"
 #include <stdio.h>
-#include<individual.h>
+#include <stdlib.h>
+#include "country.h"
+#include "individual.h"
 
 /**
  * @brief Create a country on the map 
  * @param x,y,z,w vertix of the country
  * @return country 
  */
-Country addCountry(Point x,Point y,Point z,Point w,int name)
+void addCountry(struct Point x,struct Point y,struct Point z,struct Point w,int name,struct Country *country)
 {
-    Country country;
+   // struct Country country;
 
-    country.x=x;
-    country.y=y;
-    country.w=w;
-    country.z=z;
-    country.name=name;
-    IndividualNode *node;
+    country->x=x;
+    country->y=y;
+    country->w=w;
+    country->z=z;
+    country->name=name;
+    struct IndividualNode *node=malloc(sizeof(struct IndividualNode));
     node->individual=NULL;
     node->next=NULL;
-    country.individuals=node;
-    return country;
+    country->individuals=node;
+    
 }
 
-void addIndividual(IndividualNode *individuals,Individual *individual){
+void addIndividual(struct IndividualNode *individuals,struct Individual *individual){
 
-IndividualNode *newIndividual=(IndividualNode*)malloc(sizeof(IndividualNode));
+struct IndividualNode *newIndividual=(struct IndividualNode*)malloc(sizeof(struct IndividualNode));
 if(newIndividual==NULL){
     printf("Unable to allocate memory for the new node");
     return;
@@ -35,36 +36,47 @@ if(newIndividual==NULL){
 newIndividual->individual=individual;
 newIndividual->next=NULL;
 
+if(individuals==NULL){
+    individuals=malloc(sizeof(struct IndividualNode));
+    individuals->individual=malloc(sizeof(struct Individual));
+        individuals->individual=individual;
+        individuals->next=NULL;
+}
 
-if(individuals->individual == NULL){
-        individuals->individual = newIndividual;
+
+else if(individuals->individual == NULL){
+    
+        individuals->individual=malloc(sizeof(struct Individual));
+        individuals->individual=individual;
         individuals->next=NULL;
     }
-    else
+    
+else
     {
-        IndividualNode *current = individuals;
+       
+        struct IndividualNode *current = malloc(sizeof(struct IndividualNode));
+        current=individuals;
         while(current->next != NULL)
-        {
-        current = current->next;
-        }
+            current = current->next;
+        
+        current->next=newIndividual;
       
-        current->next = newIndividual;
+       
+        
                
             
     }
 
-
     
 }
 
-void removeIndividual(IndividualNode *individuals,Individual *individual){
+void removeIndividual(struct IndividualNode *individuals,struct Individual *individual){
 
-     IndividualNode *cur=individuals;
+     struct IndividualNode *cur=individuals;
 
      if(individuals==NULL||individuals->individual==NULL)
         return;
-   
-
+  
     if(individuals->individual==individual)
         {
             if (individuals->next!=NULL){
@@ -72,17 +84,18 @@ void removeIndividual(IndividualNode *individuals,Individual *individual){
                 return ;
             }
             else{
-                individuals->individual=NULL;
+                individuals=NULL;
                 return;
             }
 
-        }
+        } 
+
 else if(individuals->individual!=individual && individuals->next == NULL) {
       return;
 }
-    IndividualNode *current;
-    IndividualNode *prev;
-    IndividualNode *hop;
+    struct IndividualNode *current=malloc(sizeof (struct IndividualNode));
+    struct IndividualNode *prev=malloc(sizeof (struct IndividualNode));
+    struct IndividualNode *hop=malloc(sizeof (struct IndividualNode));
     current= individuals;
    
    while(current->next != NULL && (current->individual!=individual)) {
@@ -98,3 +111,28 @@ else if(individuals->individual!=individual && individuals->next == NULL) {
      
 
 }
+
+void printIndividuals(struct IndividualNode *individuals){
+    if(individuals==NULL||individuals->individual==NULL)
+        {
+            printf("no individual");
+            return;
+        }
+
+       printf("\nstate: %d\nx: %d\ny: %d\n#: %d\n",(int) individuals->individual->state,
+       individuals->individual->point.x,
+       individuals->individual->point.y,
+       individuals->individual->country->name);
+    
+    while(individuals->next!=NULL){
+    printf("\nstate: %d\nx: %d\ny: %d\n#: %d\n",(int) individuals->next->individual->state,
+       individuals->next->individual->point.x,
+       individuals->next->individual->point.y,
+       individuals->next->individual->country->name);
+
+       individuals->next=individuals->next->next;
+    }
+
+
+}
+
