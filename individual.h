@@ -30,7 +30,7 @@ typedef struct
 
 void updateState(unsigned int neighbors, Individual * individual);
 
-void updateCountry(Individual *individual, Country *newCountry);//todo fare implementazione
+void updateCountry(Individual *individual, Country *newCountry);
 
 Individual createHealthyIndividual(int x,int y);
 
