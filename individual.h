@@ -30,7 +30,7 @@ typedef enum
 
 void updateState(unsigned int neighbors,  struct Individual * individual);
 
-void updateCountry(Individual *individual, Country *newCountry);
+void updateCountry(struct Individual *individual, struct Country *newCountry);//todo fare implementazione
 
 struct Individual createHealthyIndividual(int x,int y);
 struct Individual createInfectedIndividual(int x,int y);

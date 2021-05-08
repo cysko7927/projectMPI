@@ -2,14 +2,17 @@
 #define DISTANCE_CALCULATION
 #include <stdio.h>
 #include "individual.h"
+#include <mpi.h>
 
-typedef struct 
+
+struct Distance 
 {
     unsigned int x;
     unsigned int y;
     unsigned int key;
     double distance;
-} Distance;
+};
 
-void calculateDistance(Individual allIndividual[],Distance allDistance[],unsigned int nTotalIndividual,unsigned int keyIndividual);
+void calculateDistance(struct Individual allIndividual[],struct Distance allDistance[],unsigned int nTotalIndividual,unsigned int keyIndividual);
+MPI_Datatype defineDistanceForMPI();
 #endif
