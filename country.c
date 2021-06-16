@@ -5,8 +5,9 @@
 
 /**
  * @brief Create a country on the map 
- * @param x,y,z,w vertix of the country
- * @return country 
+ * @param x @param y @param z @param w vertix of the country
+ * @param name name assigned to the contry in order to be identificable
+ * @param country the country pointer that it's used in order to build the Country
  */
 void addCountry(struct Point x,struct Point y,struct Point z,struct Point w,int name,struct Country *country)
 {
@@ -24,6 +25,12 @@ void addCountry(struct Point x,struct Point y,struct Point z,struct Point w,int 
     
 }
 
+
+/**
+ * @brief Add a new individual to an individuals list, if the list doesn't exists then it builds one   
+ * @param individuals list of individuals
+ * @param individual individual that needs to be added to the individuals list 
+ */
 void addIndividual(struct IndividualNode *individuals,struct Individual *individual){
 
 struct IndividualNode *newIndividual=(struct IndividualNode*)malloc(sizeof(struct IndividualNode));
@@ -70,6 +77,12 @@ else
     
 }
 
+/**
+ * @brief remove an individual from an individuals list
+ * @param individuals list of individuals
+ * @param individual individual that needs to removed from the individuals list 
+ */
+
 void removeIndividual(struct IndividualNode *individuals,struct Individual *individual){
 
      struct IndividualNode *cur=individuals;
@@ -112,6 +125,11 @@ else if(individuals->individual!=individual && individuals->next == NULL) {
 
 }
 
+/**
+ * @brief method used for end-day statistics
+ * @param individuals list of individuals
+ */
+
 void printIndividuals(struct IndividualNode *individuals){
     if(individuals==NULL||individuals->individual==NULL)
         {
@@ -136,3 +154,44 @@ void printIndividuals(struct IndividualNode *individuals){
 
 }
 
+/**
+ * @brief method used for end-day statistics reguarding country sick/healthy/nsusceptible collected intel
+ * @param country the country that has the info that the program is going to print at end-day statistics
+ */
+
+void countryStatistics(struct Country country){
+
+    int healthyCount=0;
+    int suceptibleCount=0;
+    int immuneCount=0;
+    int infectedCount=0;
+
+    struct IndividualNode *individuals=country.individuals;
+    if(individuals==NULL||individuals->individual==NULL)
+        return;
+
+
+
+    while (individuals!=NULL&&individuals->individual!=NULL)
+    {
+        switch (individuals->individual->state)
+        {
+        case healthy:healthyCount++;
+            break;
+        case immune:immuneCount++;
+            break;
+        case infectionsInProgress:suceptibleCount++;
+            break;
+        case infected: infectedCount++;
+            break;
+        default:
+            break;
+        }
+
+        individuals=individuals->next;
+    }
+
+    printf("\n---------COUNTRY #%d ----------------\n\nhealthy individuals: %d\ninfected individuals: %d\nsusceptible individuals: %d\nimmune individuals: %d\n-------------------------------------\n"
+        ,country.name,healthyCount,infectedCount,suceptibleCount,immuneCount);
+    
+}

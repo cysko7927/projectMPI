@@ -22,6 +22,13 @@ struct Individual createHealthyIndividual(int x,int y)
     return individual;
 }
 
+/**
+ * @brief Create an Infected Individual located in a point of the rectangle 
+ * 
+ * @param x base in the rectangle
+ * @param y height in the rectangle
+ * @return Individual created
+ */
 struct Individual createInfectedIndividual(int x,int y)
 {
     struct Individual individual;
