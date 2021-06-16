@@ -2,6 +2,7 @@
     "files.associations": {
         "country.h": "c",
         "world.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "distancecalculation.h": "c"
     }
 }

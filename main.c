@@ -1,13 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <mpi.h>
 #include "world.h"
 #include "country.h"
+#include "DistanceCalculation.h"
 
-
+                          
 
 
 int main(int argc, char const *argv[])
 {
+
+    MPI_Init(&argc, &argv);
+
             //0 N of individuals
             //1 N of infected individuals
             //2 height of the world
@@ -18,11 +23,9 @@ int main(int argc, char const *argv[])
             //7 max distance
             // t
 
+
 //-----------------------------------------------  check on the parameters --------------------------------------//
     
-
-
-
     if(argc!=10){   
         printf("Please insert the required parameters");
         return 0;
@@ -36,9 +39,9 @@ int main(int argc, char const *argv[])
     int countryHeight=*argv[5]-'0';
     int countryWidht=*argv[6]-'0';
     int speed=*argv[7]-'0';
-    int maxDistance=*argv[8]-'0';
+    int minDistance=*argv[8]-'0';
     int time=*argv[9]-'0';
-
+   
     if(numOfIndividuals<0||
         numOfInfectedIndividuals<0||
         worldHeight<0||
@@ -46,7 +49,7 @@ int main(int argc, char const *argv[])
         countryHeight<0||
         countryWidht<0||
         speed<0||
-        maxDistance<0||
+        minDistance<0||
         time<0
         ){
         printf("All the values must be non negative");
@@ -119,33 +122,92 @@ int main(int argc, char const *argv[])
 
 
 
-// creation of the world        
+//------------------------------------------creation of the world------------------------------------//        
   struct World world;
   
   buildWorld(&world,worldWidht,worldHeight,numOfCountries,countryWidht,countryHeight);
  printWorld(world); 
  printCountries(world); 
  
-// add individuals to the world
+//--------- add individuals to the world
 
  addIndividuals(&world, numOfIndividuals,  numOfInfectedIndividuals,speed);
   for(int i=0; i<world.numOfCountries;i++){
 
       struct Country country=getCountries(world)[i];
- 
-      printf("\nCountry #%d - individuals:\n",i);
       printIndividuals(country.individuals);
+
   }
   
   for(int i=0;i<numOfCountries;i++){
+      //for each individual of each contry do the movement and then print the individual and the directions
       while(world.countries[i].individuals!=NULL&&world.countries[i].individuals->individual!=NULL) {
-         doMovement(world.countries[i].individuals->individual,world);
-          printIndividual(world.countries[i].individuals->individual);
+        doMovement(world.countries[i].individuals->individual,world);
+        printIndividual(world.countries[i].individuals->individual);
         printDirection(world.countries[i].individuals->individual->movement.direction);
-          world.countries[i].individuals=world.countries[i].individuals->next;
+        world.countries[i].individuals=world.countries[i].individuals->next;
       }
   }
   
+
+ int elapsedSeconds=0;
+ struct IndividualNode *allIndividuals;
+ struct Distance *distances=malloc((numOfIndividuals)*sizeof(struct Distance));
+ unsigned int bool=0;
+
+        //save all the individuals into a list
+    for(int i=0;i<numOfCountries;i++){
+        if(world.countries[i].individuals!=NULL&&world.countries[i].individuals->individual!=NULL)
+        {
+            if(allIndividuals==NULL||allIndividuals->individual==NULL)
+                allIndividuals=world.countries[i].individuals;
+            else
+                allIndividuals->next=world.countries[i].individuals;    
+        }
+    }
+
+    //-------------------each process manages part of all the individuals
+    int my_rank;
+    int numOfProc=1;
+    int answer;
+    MPI_Init();    //mpi enviroment starts
+
+        //find a number of process to equally divide the individuals
+    while(numOfIndividuals%numOfProc!=0 && numOfProc<numOfIndividuals)
+        numOfProc++;
+            
+        
+    MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+    MPI_Comm_size(MPI_COMM_WORLD,numOfProc);
+
+        //dummy method for time management //TODO
+    
+    while (true)
+    {
+     while (elapsedSeconds<secondsInADay)
+      {
+        if(my_rank==0)
+            break;
+        for(int i=0;i<numOfIndividuals;i++){
+            calculateDistance(allIndividuals,&distances,numOfIndividuals,i);
+            bool=checkIfNearInfected(distances,allIndividuals,minDistance,i);
+            updateState(bool,&allIndividuals[i].individual);
+
+        }
+        MPI_Barrier(MPI_COMM_WORLD);
+        elapsedSeconds=+time;
+      }
+
+    printf("Do you wish to emulate another day? if so digit 1 ");
+        scanf("%d",&answer);
+        if(answer==1)
+            elapsedSeconds=0;
+     
+    }
+
+
+MPI_Finalize();
+
   
 }
 

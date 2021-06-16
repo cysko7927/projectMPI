@@ -50,3 +50,14 @@ void printCountries(struct World world){
    );
     }
 }
+
+void statistics(struct World world){
+    int maxi=world.numOfCountries;
+    for(int i=0;i<maxi;i++){
+
+        countryStatistics(world.countries[i]);
+    }
+}
+
+
+

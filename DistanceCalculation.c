@@ -5,6 +5,13 @@
 #include "country.h"
 #include <math.h>
 
+/**
+ * @brief calculate the distance between an individual and all the others
+ * @param allIndividual list of individuals
+ * @param allDistance distance of the individual from allIndividual
+ * @param nTotalIndividual number of individual to check
+ * @param keyIndividual index of the individual of which the method find the distance from allIndividual 
+ */
 
 void calculateDistance(struct Individual allIndividual[],struct Distance allDistance[],unsigned int nTotalIndividual,unsigned int keyIndividual)
 {
@@ -144,4 +151,29 @@ MPI_Datatype defineDistanceForMPI()
     MPI_Type_commit(&mpi_distance);
 
     return mpi_distance;
+}
+
+/**
+ * @brief check if the individual is near an infected individual
+ * @param allIndividual list of individuals
+ * @param distance distance of the individual from allIndividual
+ * @param minDistance distance to keep in order to not being infected by an infected individual
+ * @param keyIndividual index of the individual to be considered
+ * @return the total number of the infected individual near the keyIndividual individual
+ */
+
+unsigned checkIfNearInfected(struct Distance *distances,struct IndividualNode *allIndividuals,int minDistance,int indexIndividual){
+    unsigned int i=0;
+    int infected=0;
+    struct IndividualNode *cur=allIndividuals;
+    while(cur!=NULL&&cur->individual!=NULL&&infected<=0){
+        if(indexIndividual!=i){
+            if(distances[i]<minDistance&&cur->individual->state)
+                infected++;
+            }
+
+            cur->individual=cur->next;
+        }
+    }
+    return infected;
 }
