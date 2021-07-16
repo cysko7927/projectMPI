@@ -11,7 +11,10 @@
 int main(int argc, char const *argv[])
 {
 
-    MPI_Init(&argc, &argv);
+    MPI_Init(&argc, &argv);//mpi enviroment starts
+    int my_rank, world_size; 
+    MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+    MPI_Comm_size(MPI_COMM_WORLD,numOfProc);
 
             //0 N of individuals
             //1 N of infected individuals
@@ -25,9 +28,13 @@ int main(int argc, char const *argv[])
 
 
 //-----------------------------------------------  check on the parameters --------------------------------------//
+    int isparametersCorrects = 1;//Assume that the parameters are correct
+
+    if (my_rank == 0){
     
+
     if(argc!=10){   
-        printf("Please insert the required parameters");
+        if (my_rank == 0){printf("Please insert the required parameters");}
         return 0;
         }
 
@@ -52,67 +59,67 @@ int main(int argc, char const *argv[])
         minDistance<0||
         time<0
         ){
-        printf("All the values must be non negative");
+        if (my_rank == 0){printf("All the values must be non negative");}
         return 0;
     }
     if(numOfIndividuals<2){
-        printf("the system must have at least 2 individuals");
+        if (my_rank == 0){printf("the system must have at least 2 individuals");}
         return 0;
     }
 
     if(numOfInfectedIndividuals<1){
-        printf("the system must have at least 1 infected individual");
+        if (my_rank == 0){printf("the system must have at least 1 infected individual");}
         return 0;
     }
 
     if(worldHeight==0){
-        printf("the world's height has to be at least 1");
+        if (my_rank == 0){printf("the world's height has to be at least 1");}
         return 0;
     }
 
     if(worldWidht==0){
-        printf("the world's width has to be at least 1");
+        if (my_rank == 0){printf("the world's width has to be at least 1");}
         return 0;
     }
 
     if(countryHeight==0){
-        printf("the countries' height has to be at least 1");
+        if (my_rank == 0){printf("the countries' height has to be at least 1");}
         return 0;
     }
 
     if(countryWidht==0){
-        printf("the countries' width has to be at least 1");
+        if (my_rank == 0){printf("the countries' width has to be at least 1");}
         return 0;
     }
 
     if(time==0){
-        printf("please add an time interval greater than 0");
+        if (my_rank == 0){printf("please add an time interval greater than 0");}
         return 0;
     }
 
 
     if(worldHeight<countryHeight){
-        printf("the height of the countries cannot be higher than the world's height");
+        if (my_rank == 0){printf("the height of the countries cannot be higher than the world's height");}
         return 0;
     }
     if(worldWidht<countryWidht){
-        printf("the width of the countries cannot be longer than the world's width");
+        if (my_rank == 0){printf("the width of the countries cannot be longer than the world's width");}
         return 0;
     }
     float rest= (worldHeight*worldWidht) % (countryWidht*countryHeight);
 
     if(rest!=0){
-        printf("the area of the world have to be divisible by the area of the countries");
+        if (my_rank == 0){printf("the area of the world have to be divisible by the area of the countries");}
         return 0;
     }
 
     if(worldHeight%countryHeight!=0){
-        printf("the height of the wolrd has to been divisible by the height of the countries");
+        if (my_rank == 0){printf("the height of the wolrd has to been divisible by the height of the countries");}
         return 0;
     }
 
     if(worldWidht%countryWidht!=0){
-        printf("the widht of the wolrd has to been divisible by the widht of the countries");
+        if (my_rank == 0){printf("the widht of the wolrd has to been divisible by the widht of the countries");}
         return 0;
     }
 
@@ -135,7 +142,7 @@ int main(int argc, char const *argv[])
   for(int i=0; i<world.numOfCountries;i++){
 
       struct Country country=getCountries(world)[i];
-      printIndividuals(country.individuals);
+      if (my_rank == 0){printIndividuals(country.individuals);}
 
   }
   
@@ -143,8 +150,8 @@ int main(int argc, char const *argv[])
       //for each individual of each contry do the movement and then print the individual and the directions
       while(world.countries[i].individuals!=NULL&&world.countries[i].individuals->individual!=NULL) {
         doMovement(world.countries[i].individuals->individual,world);
-        printIndividual(world.countries[i].individuals->individual);
-        printDirection(world.countries[i].individuals->individual->movement.direction);
+        if (my_rank == 0){printIndividual(world.countries[i].individuals->individual);}
+        if (my_rank == 0){printDirection(world.countries[i].individuals->individual->movement.direction);}
         world.countries[i].individuals=world.countries[i].individuals->next;
       }
   }
@@ -167,41 +174,48 @@ int main(int argc, char const *argv[])
     }
 
     //-------------------each process manages part of all the individuals
-    int my_rank;
-    int numOfProc=1;
-    int answer;
-    MPI_Init();    //mpi enviroment starts
 
-        //find a number of process to equally divide the individuals
-    while(numOfIndividuals%numOfProc!=0 && numOfProc<numOfIndividuals)
-        numOfProc++;
+    int answer;
+    int exit = false;
+
+
             
         
-    MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
-    MPI_Comm_size(MPI_COMM_WORLD,numOfProc);
 
-        //dummy method for time management //TODO
+    //dummy method for time management //TODO
     
-    while (true)
+    while (!exit)
     {
      while (elapsedSeconds<secondsInADay)
       {
-        if(my_rank==0)
-            break;
-        for(int i=0;i<numOfIndividuals;i++){
+        
+        for(int i=0;i<numOfIndividuals;i++)
+        {
             calculateDistance(allIndividuals,&distances,numOfIndividuals,i);
             bool=checkIfNearInfected(distances,allIndividuals,minDistance,i);
             updateState(bool,&allIndividuals[i].individual);
 
         }
+
         MPI_Barrier(MPI_COMM_WORLD);
         elapsedSeconds=+time;
       }
+        if (my_rank == 0)
+        {
+            printf("Do you wish to emulate another day? if so digit 1 ");
+            scanf("%d",&answer);
+        }
 
-    printf("Do you wish to emulate another day? if so digit 1 ");
-        scanf("%d",&answer);
+        MPI_Barrier(MPI_COMM_WORLD);
+
+        MPI_Bcast(&answer,1,MPI_INT,0,MPI_COMM_WORLD);
+        
         if(answer==1)
+        {
             elapsedSeconds=0;
+            exit = true;
+        }
+            
      
     }
 
