@@ -158,22 +158,31 @@ MPI_Datatype defineDistanceForMPI()
  * @param allIndividual list of individuals
  * @param distance distance of the individual from allIndividual
  * @param minDistance distance to keep in order to not being infected by an infected individual
- * @param keyIndividual index of the individual to be considered
+ * @param indexIndividual index of the individual to be considered
  * @return the total number of the infected individual near the keyIndividual individual
  */
 
-unsigned checkIfNearInfected(struct Distance *distances,struct IndividualNode *allIndividuals,int minDistance,int indexIndividual){
-    unsigned int i=0;
-    int infected=0;
+int checkIfNearInfected(struct Distance *distances,struct IndividualNode *allIndividuals,int minDistance,int indexIndividual){
+    int i=0;
     struct IndividualNode *cur=allIndividuals;
-    while(cur!=NULL&&cur->individual!=NULL&&infected<=0){
-        if(indexIndividual!=i){
-            if(distances[i]<minDistance&&cur->individual->state)
-                infected++;
-            }
 
-            cur->individual=cur->next;
+        //scan all the individuals
+    while(cur!=NULL&&cur->individual!=NULL){
+        //--if the counter is equal to indexIndividual then we have to skip the confront
+            //we can't compare the indidividual with itself
+        if(indexIndividual!=i){
+            //compare distances 
+            if(distances[i].distance<=minDistance&&cur->individual->state==infected){
+            //then the individual is near an infected and we can stop here
+                return 1;
+                }
         }
+            //update di i
+            i=i++;
+            //update di cur
+           cur=cur->next;
+        
     }
-    return infected;
+    //the individual isn't near to any infected individual
+    return 0;
 }

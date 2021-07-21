@@ -12,7 +12,8 @@ int main(int argc, char const *argv[])
 {
 
     MPI_Init(&argc, &argv);//mpi enviroment starts
-    int my_rank, world_size; 
+    int my_rank, world_size;
+    int numOfProc=10; 
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
     MPI_Comm_size(MPI_COMM_WORLD,numOfProc);
 
@@ -176,7 +177,7 @@ int main(int argc, char const *argv[])
     //-------------------each process manages part of all the individuals
 
     int answer;
-    int exit = false;
+    int exit = 0;//false
 
 
             
@@ -184,7 +185,7 @@ int main(int argc, char const *argv[])
 
     //dummy method for time management //TODO
     
-    while (!exit)
+    while (exit==0)
     {
      while (elapsedSeconds<secondsInADay)
       {
@@ -213,7 +214,7 @@ int main(int argc, char const *argv[])
         if(answer==1)
         {
             elapsedSeconds=0;
-            exit = true;
+            exit = 1;
         }
             
      
@@ -451,7 +452,7 @@ if(dir!=STOP)
 
 //nb if the individual is on the line between two countries it doesn't change its country value
 // until it doesn't surpass the line
-checkIfCountryHasBeenChanged(struct Individual *individual,struct World world)  {
+void checkIfCountryHasBeenChanged(struct Individual *individual,struct World world)  {
     struct Country *country=individual->country;
     if(individual->point.x>country->w.x||individual->point.x<country->x.x||individual->point.y>country->y.y||individual->point.y<country->x.y)
     {
@@ -592,4 +593,6 @@ void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World wor
     }
 
     else individual->movement.direction=STOP; //if both direction and the oppesed direction are not possible then the individual is stooped for the round
+}
+
 }
