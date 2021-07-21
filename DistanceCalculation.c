@@ -159,7 +159,7 @@ MPI_Datatype defineDistanceForMPI()
  * @param distance distance of the individual from allIndividual
  * @param minDistance distance to keep in order to not being infected by an infected individual
  * @param indexIndividual index of the individual to be considered
- * @return the total number of the infected individual near the keyIndividual individual
+ * @return 1 if near an infected 0 otherwise
  */
 
 int checkIfNearInfected(struct Distance *distances,struct IndividualNode *allIndividuals,int minDistance,int indexIndividual){
