@@ -12,7 +12,8 @@ int main(int argc, char const *argv[])
 {
 
     MPI_Init(&argc, &argv);//mpi enviroment starts
-    int my_rank, world_size; 
+    int my_rank, world_size;
+    int numOfProc=10; 
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
     MPI_Comm_size(MPI_COMM_WORLD,world_size);
 
@@ -183,7 +184,7 @@ int main(int argc, char const *argv[])
 
     //dummy method for time management //TODO
     
-    while (!exit)
+    while (exit==0)
     {
      while (elapsedSeconds<secondsInADay)
       {
