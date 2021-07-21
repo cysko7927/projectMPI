@@ -14,7 +14,7 @@ int main(int argc, char const *argv[])
     MPI_Init(&argc, &argv);//mpi enviroment starts
     int my_rank, world_size; 
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
-    MPI_Comm_size(MPI_COMM_WORLD,numOfProc);
+    MPI_Comm_size(MPI_COMM_WORLD,world_size);
 
             //0 N of individuals
             //1 N of infected individuals
@@ -27,10 +27,9 @@ int main(int argc, char const *argv[])
             // t
 
 
-//-----------------------------------------------  check on the parameters --------------------------------------//
+    //-----------------------------------------------  check on the parameters --------------------------------------//
     int isparametersCorrects = 1;//Assume that the parameters are correct
 
-    if (my_rank == 0){
     
 
     if(argc!=10){   
@@ -124,19 +123,19 @@ int main(int argc, char const *argv[])
     }
 
      int numOfCountries= (worldHeight*worldWidht) / (countryWidht*countryHeight);
-//---------------------------------------------------------------------------------------------------//
+    //---------------------------------------------------------------------------------------------------//
 
 
 
 
-//------------------------------------------creation of the world------------------------------------//        
+    //------------------------------------------creation of the world------------------------------------//        
   struct World world;
   
   buildWorld(&world,worldWidht,worldHeight,numOfCountries,countryWidht,countryHeight);
- printWorld(world); 
- printCountries(world); 
+  if (my_rank == 0){printWorld(world);} 
+  if (my_rank == 0){printCountries(world);} 
  
-//--------- add individuals to the world
+    //--------- add individuals to the world
 
  addIndividuals(&world, numOfIndividuals,  numOfInfectedIndividuals,speed);
   for(int i=0; i<world.numOfCountries;i++){
@@ -176,7 +175,7 @@ int main(int argc, char const *argv[])
     //-------------------each process manages part of all the individuals
 
     int answer;
-    int exit = false;
+    int exit = 0;
 
 
             
@@ -192,6 +191,8 @@ int main(int argc, char const *argv[])
         for(int i=0;i<numOfIndividuals;i++)
         {
             calculateDistance(allIndividuals,&distances,numOfIndividuals,i);
+            //Todo Solo il processo 0 deve calcolare il numero di vicini e poi inviare bool a tutti gli
+            //altri processi con un broadcast
             bool=checkIfNearInfected(distances,allIndividuals,minDistance,i);
             updateState(bool,&allIndividuals[i].individual);
 
@@ -202,6 +203,7 @@ int main(int argc, char const *argv[])
       }
         if (my_rank == 0)
         {
+            //Todo Bisogna stampare le statistiche
             printf("Do you wish to emulate another day? if so digit 1 ");
             scanf("%d",&answer);
         }
@@ -213,16 +215,17 @@ int main(int argc, char const *argv[])
         if(answer==1)
         {
             elapsedSeconds=0;
-            exit = true;
+            exit = 1;
         }
             
      
     }
 
 
-MPI_Finalize();
+    MPI_Finalize();
 
   
+    
 }
 
 
@@ -451,7 +454,7 @@ if(dir!=STOP)
 
 //nb if the individual is on the line between two countries it doesn't change its country value
 // until it doesn't surpass the line
-checkIfCountryHasBeenChanged(struct Individual *individual,struct World world)  {
+void checkIfCountryHasBeenChanged(struct Individual *individual,struct World world)  {
     struct Country *country=individual->country;
     if(individual->point.x>country->w.x||individual->point.x<country->x.x||individual->point.y>country->y.y||individual->point.y<country->x.y)
     {
@@ -592,4 +595,6 @@ void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World wor
     }
 
     else individual->movement.direction=STOP; //if both direction and the oppesed direction are not possible then the individual is stooped for the round
+
+    return;
 }
