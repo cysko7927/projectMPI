@@ -171,7 +171,10 @@ int checkIfNearInfected(struct Distance *distances,struct IndividualNode *allInd
     while(cur!=NULL&&cur->individual!=NULL){
         //--if the counter is equal to indexIndividual then we have to skip the confront
             //we can't compare the indidividual with itself
-        if(indexIndividual!=j){
+            if(indexIndividual==j){
+                j++;
+                cur=cur->next;
+            }
             //compare distances 
             if(distances[i].distance<=minDistance&&cur->individual->state==infected)
             {
@@ -179,13 +182,11 @@ int checkIfNearInfected(struct Distance *distances,struct IndividualNode *allInd
                 return 1;
             }
 
-            //update di i
-            i++;
-        }
-            
-            //update di cur
-           cur=cur->next;
-           j++;
+        //update di i
+         i++;
+        //update di cur
+        cur=cur->next;
+        j++;
         
     }
     //the individual isn't near to any infected individual

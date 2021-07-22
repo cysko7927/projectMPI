@@ -159,21 +159,17 @@ int main(int argc, char const *argv[])
 
  int elapsedSeconds=0;
  struct IndividualNode *allIndividuals;
- struct Distance *distances=malloc((numOfIndividual-1)*sizeof(struct Distance)); //Le distanze sono sempre N-1 perché va escluso sempre il primo punto che si prende per calcolare le distanze
+ struct Distance *distances=malloc((numOfIndividuals-1)*sizeof(struct Distance)); //Le distanze sono sempre N-1 perché va escluso sempre il primo punto che si prende per calcolare le distanze
  unsigned int bool=0;
 
         //save all the individuals into a list
-        /**
-         * Warning: la creazione di questa lista è sbagliata perchè viene creata una lista con
-         * gli individui appartenenti solo a due country
-         * */
+       
+    struct IndividualNode *individuals; 
     for(int i=0;i<numOfCountries;i++){
-        if(world.countries[i].individuals!=NULL&&world.countries[i].individuals->individual!=NULL)
-        {
-            if(allIndividuals==NULL||allIndividuals->individual==NULL)
-                allIndividuals=world.countries[i].individuals;
-            else
-                allIndividuals->next=world.countries[i].individuals;    
+        individuals=world.countries[i].individuals;
+        while(individuals!=NULL&&individuals->individual!=NULL){
+            addIndividual(&allIndividuals,individuals->individual);
+            individuals=individuals->next;
         }
     }
 
@@ -187,6 +183,8 @@ int main(int argc, char const *argv[])
         
 
     //dummy method for time management //TODO
+
+    struct IndividualNode *cur; 
     
     while (exit==0)
     {
@@ -206,7 +204,13 @@ int main(int argc, char const *argv[])
 
             updateState(bool,&allIndividuals[i].individual);
 
-            //Todo :una volta aggiornato lo stato bisogna muovere l'individuo
+            cur=individuals;
+
+            while (cur!=NULL&&cur->individual!=NULL)
+            {
+                doMovement(&cur->individual,world);
+                cur=cur->next;
+            }
 
         }
 
@@ -226,7 +230,8 @@ int main(int argc, char const *argv[])
         if(answer==1)
         {
             elapsedSeconds=0;
-             //Todo Bisogna stampare le statistiche
+            for(int i=0;i<numOfCountries;i++)
+             countryStatistics(getCountries(world)[i]);
             exit = 1;
         }
             
