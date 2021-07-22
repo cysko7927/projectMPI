@@ -159,10 +159,14 @@ int main(int argc, char const *argv[])
 
  int elapsedSeconds=0;
  struct IndividualNode *allIndividuals;
- struct Distance *distances=malloc((numOfIndividuals)*sizeof(struct Distance));
+ struct Distance *distances=malloc((numOfIndividual-1)*sizeof(struct Distance)); //Le distanze sono sempre N-1 perché va escluso sempre il primo punto che si prende per calcolare le distanze
  unsigned int bool=0;
 
         //save all the individuals into a list
+        /**
+         * Warning: la creazione di questa lista è sbagliata perchè viene creata una lista con
+         * gli individui appartenenti solo a due country
+         * */
     for(int i=0;i<numOfCountries;i++){
         if(world.countries[i].individuals!=NULL&&world.countries[i].individuals->individual!=NULL)
         {
@@ -192,10 +196,17 @@ int main(int argc, char const *argv[])
         for(int i=0;i<numOfIndividuals;i++)
         {
             calculateDistance(allIndividuals,&distances,numOfIndividuals,i);
-            //Todo Solo il processo 0 deve calcolare il numero di vicini e poi inviare bool a tutti gli
+            //Solo il processo 0 deve calcolare il numero di vicini e poi inviare bool a tutti gli
             //altri processi con un broadcast
-            bool=checkIfNearInfected(distances,allIndividuals,minDistance,i);
+            if(my_rank == 0){bool = checkIfNearInfected(distances,allIndividuals,minDistance,i);}
+
+            MPI_Bcast(&bool,1,MPI_INT,0,MPI_COMM_WORLD);
+
+            MPI_Barrier(MPI_COMM_WORLD);
+
             updateState(bool,&allIndividuals[i].individual);
+
+            //Todo :una volta aggiornato lo stato bisogna muovere l'individuo
 
         }
 
@@ -204,7 +215,6 @@ int main(int argc, char const *argv[])
       }
         if (my_rank == 0)
         {
-            //Todo Bisogna stampare le statistiche
             printf("Do you wish to emulate another day? if so digit 1 ");
             scanf("%d",&answer);
         }
@@ -216,6 +226,7 @@ int main(int argc, char const *argv[])
         if(answer==1)
         {
             elapsedSeconds=0;
+             //Todo Bisogna stampare le statistiche
             exit = 1;
         }
             
