@@ -10,12 +10,11 @@
 
 int main(int argc, char const *argv[])
 {
-
     MPI_Init(&argc, &argv);//mpi enviroment starts
     int my_rank, world_size;
     int numOfProc=10; 
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
-    MPI_Comm_size(MPI_COMM_WORLD,world_size);
+    MPI_Comm_size(MPI_COMM_WORLD,&world_size);
 
             //0 N of individuals
             //1 N of infected individuals
@@ -39,16 +38,21 @@ int main(int argc, char const *argv[])
         }
 
     
-    int numOfIndividuals=*argv[1]-'0';
-    int numOfInfectedIndividuals=*argv[2]-'0';
-    int worldHeight=*argv[3]-'0';
-    int worldWidht=*argv[4]-'0';
-    int countryHeight=*argv[5]-'0';
-    int countryWidht=*argv[6]-'0';
-    int speed=*argv[7]-'0';
-    int minDistance=*argv[8]-'0';
-    int time=*argv[9]-'0';
+    int numOfIndividuals= atoi(argv[1]);
+    
+    int numOfInfectedIndividuals= atoi(argv[2]);
+    int worldHeight=atoi(argv[3]);
+    int worldWidht=atoi(argv[4]);
+    int countryHeight=atoi(argv[5]);
+    int countryWidht=atoi(argv[6]);
+    int speed=atoi(argv[7]);
+    int minDistance=atoi(argv[8]);
+    int time=atoi(argv[9]);;
    
+   printf("%s\n",argv[1]);
+   printf("%d\n",numOfIndividuals);
+
+
     if(numOfIndividuals<0||
         numOfInfectedIndividuals<0||
         worldHeight<0||
@@ -133,6 +137,7 @@ int main(int argc, char const *argv[])
   struct World world;
   
   buildWorld(&world,worldWidht,worldHeight,numOfCountries,countryWidht,countryHeight);
+
   if (my_rank == 0){printWorld(world);} 
   if (my_rank == 0){printCountries(world);} 
  
@@ -162,10 +167,15 @@ int main(int argc, char const *argv[])
  struct Distance *distances=malloc((numOfIndividuals-1)*sizeof(struct Distance)); //Le distanze sono sempre N-1 perché va escluso sempre il primo punto che si prende per calcolare le distanze
  unsigned int bool=0;
 
+ MPI_Barrier(MPI_COMM_WORLD);
+
+    printf("break50\n");
+
+    //
         //save all the individuals into a list
        
     struct IndividualNode *individuals; 
-    
+
     for(int i=0;i<numOfCountries;i++){
         individuals=world.countries[i].individuals;
         while(individuals!=NULL&&individuals->individual!=NULL){
