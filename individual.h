@@ -25,6 +25,7 @@ typedef enum
     StateIndividual state;
     struct Movement movement;
     struct Country *country;
+    int hasAlreadyMoved; //=0 if the individual has not moved in the turn
 } ;
 
 
@@ -37,6 +38,8 @@ struct Individual createInfectedIndividual(int x,int y);
 
 void setCoordinates(struct Individual *individual,int x,int y);
 void printIndividual(struct Individual *individual);
+void resetTheMovement(struct Individual *individual);
+
 
 
 

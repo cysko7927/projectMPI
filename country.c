@@ -45,15 +45,13 @@ newIndividual->next=NULL;
 
 if(individuals==NULL){
     individuals=malloc(sizeof(struct IndividualNode));
-    individuals->individual=malloc(sizeof(struct Individual)); //Warining:Questa malloc è inutile e alloca spazio che non verrà utilizzato (Creazione di garbage)
-        individuals->individual=individual;
-        individuals->next=NULL;
+    individuals->individual=individual;
+    individuals->next=NULL;
 }
 
 
 else if(individuals->individual == NULL){
     
-        individuals->individual=malloc(sizeof(struct Individual));//Warning:Questa malloc è inutile e alloca spazio che non verrà utilizzato (Creazione di garbage)
         individuals->individual=individual;
         individuals->next=NULL;
     }
@@ -61,20 +59,15 @@ else if(individuals->individual == NULL){
 else
     {
        
-        struct IndividualNode *current = malloc(sizeof(struct IndividualNode));//Warning:Questa malloc è inutile e alloca spazio che non verrà utilizzato (Creazione di garbage)
+        struct IndividualNode *current;
         current=individuals;
         while(current->next != NULL)
             current = current->next;
         
         current->next=newIndividual;
-      
-       
-        
                
-            
     }
-
-    
+  
 }
 
 /**
@@ -133,7 +126,7 @@ else if(individuals->individual!=individual && individuals->next == NULL) {
 void printIndividuals(struct IndividualNode *individuals){
     if(individuals==NULL||individuals->individual==NULL)
         {
-           printf("\nstate: %d\n no individuals\n",(int) individuals->individual->state);
+           printf("\nstate: %d\n  no individuals\n",(int) individuals->individual->state);
             return;
         }
 

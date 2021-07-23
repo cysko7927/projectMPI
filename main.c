@@ -219,9 +219,18 @@ int main(int argc, char const *argv[])
 
         cur=individuals;
 
+        //here we've to reset all the movements
+        while(cur!=NULL&&cur->individual!=NULL){
+            resetTheMovement(&cur->individual);
+            cur=cur->next;
+        }
+        cur->individual;
+
+        //the two while cycle can't be unified otherwise when an individual changes country it could move another time in the same turn
         while (cur!=NULL&&cur->individual!=NULL)
         {
-            doMovement(&cur->individual,world);
+            if(cur->individual->hasAlreadyMoved==0)
+                doMovement(&cur->individual,world);
             cur=cur->next;
         }
 
@@ -446,7 +455,7 @@ int getAmountPerCountry(restOfPeople){
 
 
 void doMovement(struct Individual *individual,struct World world){
-
+ individual->hasAlreadyMoved=1;
 
  Direction dir;
   //UP,DOWN,LEFT,RIGHT,UPLEFT,UPRIGHT,DOWNLEFT,DOWNRIGHT,STOP

@@ -17,6 +17,7 @@ struct Individual createHealthyIndividual(int x,int y)
     individual.point.y = y;
     individual.counter = 0;
     individual.state = healthy;
+    individual.hasAlreadyMoved=0;
     
 
     return individual;
@@ -37,6 +38,7 @@ struct Individual createInfectedIndividual(int x,int y)
     individual.point.y = y;
     individual.counter = 0;
     individual.state = infected;
+    individual.hasAlreadyMoved=0;
     
 
     return individual;
@@ -153,4 +155,11 @@ void printIndividual(struct Individual *individual){
   
 
 
+}
+/**
+ * Set the field hasAlreadyMoved to zero in order to allow the individual to move once again
+ * @param individual individual that has to be allowed to move again
+ */
+void resetTheMovement(struct Individual *individual){
+    individual->hasAlreadyMoved=0;
 }
