@@ -7,7 +7,7 @@
 
 /**
  * @brief calculate the distance between an individual and all the others
- * @param allIndividual list of individuals
+ * @param allIndividual array of individuals
  * @param allDistance distance of the individual from allIndividual
  * @param nTotalIndividual number of individual to check
  * @param keyIndividual index of the individual of which the method find the distance from allIndividual 
