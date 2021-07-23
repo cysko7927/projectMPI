@@ -133,7 +133,7 @@ else if(individuals->individual!=individual && individuals->next == NULL) {
 void printIndividuals(struct IndividualNode *individuals){
     if(individuals==NULL||individuals->individual==NULL)
         {
-           printf("\nstate: %d\n : no individuals\n",(int) individuals->individual->state);
+           printf("\nstate: %d\n no individuals\n",(int) individuals->individual->state);
             return;
         }
 
