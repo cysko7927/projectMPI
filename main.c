@@ -165,6 +165,7 @@ int main(int argc, char const *argv[])
         //save all the individuals into a list
        
     struct IndividualNode *individuals; 
+    
     for(int i=0;i<numOfCountries;i++){
         individuals=world.countries[i].individuals;
         while(individuals!=NULL&&individuals->individual!=NULL){
@@ -204,14 +205,14 @@ int main(int argc, char const *argv[])
 
             updateState(bool,&allIndividuals[i].individual);
 
-            cur=individuals;
+        }
 
-            while (cur!=NULL&&cur->individual!=NULL)
-            {
-                doMovement(&cur->individual,world);
-                cur=cur->next;
-            }
+        cur=individuals;
 
+        while (cur!=NULL&&cur->individual!=NULL)
+        {
+            doMovement(&cur->individual,world);
+            cur=cur->next;
         }
 
         MPI_Barrier(MPI_COMM_WORLD);
@@ -230,8 +231,13 @@ int main(int argc, char const *argv[])
         if(answer==1)
         {
             elapsedSeconds=0;
-            for(int i=0;i<numOfCountries;i++)
-             countryStatistics(getCountries(world)[i]);
+
+            if (my_rank == 0)
+            {
+                for(int i=0;i<numOfCountries;i++)
+                    countryStatistics(getCountries(world)[i]);
+            }
+
             exit = 1;
         }
             
