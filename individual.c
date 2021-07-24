@@ -143,16 +143,17 @@ void updateCountry(struct Individual *individual, struct Country *newCountry)
     removeIndividual(individual->country->individuals,individual); // remove the individual from the list inside the old country
     //individual->country = newCountry;//Update the reference to the country inside the individual
    
-    //addIndividual(newCountry->individuals,individual); //Add the individual in the list inside the new country
+   // addIndividual(newCountry->individuals,individual); //Add the individual in the list inside the new country
 
 
 }
 void printIndividual(struct Individual *individual){
    
-       printf("\nstampa singola\nstate: %d\nx: %d\ny: %d\n#: %d\n",(int) individual->state,
+       printf("\nstampa singola\nstate: %d\nx: %d\ny: %d\n#: %d\n id: %d\n",(int) individual->state,
        individual->point.x,
        individual->point.y,
-       individual->country->name);
+       individual->country->name,
+       individual->key);
     
   
 

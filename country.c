@@ -80,6 +80,7 @@ void removeIndividual(struct IndividualNode *individuals,struct Individual *indi
 printf("--inizio eliminazione di %d da %d\n",individual->key,individual->country->name);
      
      struct IndividualNode *del;
+     struct IndividualNode *hop;
 
     if(individuals==NULL||individuals->individual==NULL)
         return;
@@ -87,15 +88,18 @@ printf("--inizio eliminazione di %d da %d\n",individual->key,individual->country
     if(individuals->individual->key==individual->key)
         {
             if (individuals->next!=NULL){
-                del=individuals;
-                individuals=individuals->next;
-                printf("---%d è stato eliminato\n",individual->key);
+                del=individuals->individual;
+                hop=individuals->next;
+                individuals->individual=hop;
+                individuals->next=hop->next;
+                printf("---%d è stato eliminato  caso:1\n",individual->key);
                 free(del);
                 return ;
             }
             else{
+               printf("---%d è stato eliminato  caso:2\n",individual->key);
                free(individuals->individual);
-               individuals->individual=NULL;
+               individuals->individual=individuals->next;
                return;
             }
 
@@ -104,18 +108,18 @@ printf("--inizio eliminazione di %d da %d\n",individual->key,individual->country
 else if(individuals->next == NULL) 
       return;
     struct IndividualNode *cur=individuals;
-    struct IndividualNode *prev; 
-   while(cur->next != NULL &&cur->next->individual!=NULL&& cur->next->individual->key!=individual->key) {
-       prev=cur;
+   while(cur->next != NULL &&cur->next->individual!=NULL&& cur->next->individual->key!=individual->key) 
        cur = cur->next;
-   }
+   
   if(cur->next==NULL||cur->next->individual==NULL)
     return;
 
-   del=cur; 
-   prev->next=cur->next; 
-   printf("---%d è stato eliminato\n",individual->key);
-   free(del);
+   del=cur->next; 
+   hop=del->next;
+   cur->next=hop;
+   cur->next->next=hop->next;
+   printf("---%d è stato eliminato   caso:3\n",individual->key);
+   free(del->individual);
      
 
 }
