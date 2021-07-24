@@ -477,6 +477,7 @@ int getAmountPerCountry(restOfPeople){
 
 
 void doMovement(struct Individual *individual,struct World world){
+ printf("\n -- movimento effettuato da:  %d     \n",individual->key);   
  individual->hasAlreadyMoved=1;
 
  Direction dir;
@@ -520,9 +521,11 @@ if(dir!=STOP)
 //nb if the individual is on the line between two countries it doesn't change its country value
 // until it doesn't surpass the line
 void checkIfCountryHasBeenChanged(struct Individual *individual,struct World world)  {
+   
     struct Country *country=individual->country;
     if(individual->point.x>country->w.x||individual->point.x<country->x.x||individual->point.y>country->y.y||individual->point.y<country->x.y)
     {
+         printf("\n l'individuo %d ha cambiato stato\n",individual->key);
         //then the country must be changed
         struct Country *countries=getCountries(world);
         int i=0;
@@ -530,11 +533,11 @@ void checkIfCountryHasBeenChanged(struct Individual *individual,struct World wor
         while(i<imax){
          if(countries[i].x.x<=individual->point.x&&countries[i].w.x>=individual->point.x||countries[i].x.y<=individual->point.y&&countries[i].y.y>=individual->point.y)
             {
+                 printf("\n l'individuo %d ha richiesto l'update dello stato\n",individual->key);
                 //then we've found the right country
-                struct Country *newCountry=malloc(sizeof(struct Country));
-                *newCountry=countries[i];
-                updateCountry(individual,&world.countries[i]);
-               
+                
+                updateCountry(individual,&countries[i]);
+               return;
 
         
             }

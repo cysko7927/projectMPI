@@ -77,7 +77,7 @@ else
  */
 
 void removeIndividual(struct IndividualNode *individuals,struct Individual *individual){
-
+printf("--inizio eliminazione di %d da %d\n",individual->key,individual->country->name);
      
      struct IndividualNode *del;
 
@@ -89,13 +89,14 @@ void removeIndividual(struct IndividualNode *individuals,struct Individual *indi
             if (individuals->next!=NULL){
                 del=individuals;
                 individuals=individuals->next;
+                printf("---%d è stato eliminato\n",individual->key);
                 free(del);
                 return ;
             }
             else{
-               
-                individuals=NULL;
-                return;
+               free(individuals->individual);
+               individuals->individual=NULL;
+               return;
             }
 
         } 
@@ -113,6 +114,7 @@ else if(individuals->next == NULL)
 
    del=cur; 
    prev->next=cur->next; 
+   printf("---%d è stato eliminato\n",individual->key);
    free(del);
      
 
