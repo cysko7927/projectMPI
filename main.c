@@ -167,32 +167,42 @@ int main(int argc, char const *argv[])
   
  printf("movimento_finito");
  int elapsedSeconds=0;
- struct IndividualNode *allIndividuals;
+ struct Individual **allIndividuals = malloc((numOfIndividuals)*sizeof(struct Individual*));
  struct Distance *distances=malloc((numOfIndividuals-1)*sizeof(struct Distance)); //Le distanze sono sempre N-1 perché va escluso sempre il primo punto che si prende per calcolare le distanze
  unsigned int bool=0;
 
  MPI_Barrier(MPI_COMM_WORLD);
+ int j = 0;
 
-    printf("break50\n");
+printf("\nbreak50\n");
 
     //
         //save all the individuals into a list
        
     struct IndividualNode *individuals; 
-
+    printf("Inizio creazione array individui\n");
     for(int i=0;i<numOfCountries;i++){
         individuals=world.countries[i].individuals;
-        while(individuals!=NULL&&individuals->individual!=NULL){
-            addIndividual(&allIndividuals,individuals->individual);
+        while(individuals!=NULL&&individuals->individual!=NULL)
+        {
+            printIndividual(individuals->individual);
+            allIndividuals[j] = individuals->individual;
+            j++;
             individuals=individuals->next;
         }
     }
 
+    printf("Fine creazione array individui\n");
     //-------------------each process manages part of all the individuals
 
     int answer;
     int exit = 0;
 
+    for (int h = 0; h < numOfIndividuals; h++)
+    {
+        printIndividual(allIndividuals[h]);
+    }
+    
 
             
         
@@ -208,7 +218,7 @@ int main(int argc, char const *argv[])
         
         for(int i=0;i<numOfIndividuals;i++)
         {
-            calculateDistance(allIndividuals,&distances,numOfIndividuals,i);
+            calculateDistance(allIndividuals,distances,numOfIndividuals,i);
             //Solo il processo 0 deve calcolare il numero di vicini e poi inviare bool a tutti gli
             //altri processi con un broadcast
             if(my_rank == 0){bool = checkIfNearInfected(distances,allIndividuals,minDistance,i);}
@@ -217,7 +227,7 @@ int main(int argc, char const *argv[])
 
             MPI_Barrier(MPI_COMM_WORLD);
 
-            updateState(bool,&allIndividuals[i].individual);
+            updateState(bool,allIndividuals[i]);
 
         }
 

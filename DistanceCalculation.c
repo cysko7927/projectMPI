@@ -13,7 +13,7 @@
  * @param keyIndividual index of the individual of which the method find the distance from allIndividual 
  */
 
-void calculateDistance(struct Individual allIndividual[],struct Distance allDistance[],unsigned int nTotalIndividual,unsigned int keyIndividual)
+void calculateDistance(struct Individual *allIndividual[],struct Distance allDistance[],unsigned int nTotalIndividual,unsigned int keyIndividual)
 {
     
     int my_rank, world_size; 
@@ -22,8 +22,8 @@ void calculateDistance(struct Individual allIndividual[],struct Distance allDist
 
     unsigned int elements_per_proc = (nTotalIndividual-1)/(world_size);
 
-    long int xFirstPoint = (long int) allIndividual[keyIndividual].point.x;
-    long int yFirstPoint = (long int) allIndividual[keyIndividual].point.y;
+    long int xFirstPoint = (long int) allIndividual[keyIndividual]->point.x;
+    long int yFirstPoint = (long int) allIndividual[keyIndividual]->point.y;
 
     /*for (size_t i = 0; i < nTotalIndividual; i++)
     {
@@ -45,8 +45,8 @@ void calculateDistance(struct Individual allIndividual[],struct Distance allDist
         {
             if (i != keyIndividual)
             {
-                distanceGlobal[j].x = allIndividual[i].point.x;
-                distanceGlobal[j].y = allIndividual[i].point.y;
+                distanceGlobal[j].x = allIndividual[i]->point.x;
+                distanceGlobal[j].y = allIndividual[i]->point.y;
                 distanceGlobal[j].key = i;
                 distanceGlobal[j].distance = 0;
                 j++;
