@@ -78,42 +78,42 @@ else
 
 void removeIndividual(struct IndividualNode *individuals,struct Individual *individual){
 
-     struct IndividualNode *cur=individuals;
+     
+     struct IndividualNode *del;
 
-     if(individuals==NULL||individuals->individual==NULL)
+    if(individuals==NULL||individuals->individual==NULL)
         return;
   
-    if(individuals->individual==individual)
+    if(individuals->individual->key==individual->key)
         {
             if (individuals->next!=NULL){
-                individuals->individual=individuals->next;
+                del=individuals;
+                individuals=individuals->next;
+                free(del);
                 return ;
             }
             else{
+               
                 individuals=NULL;
                 return;
             }
 
         } 
 
-else if(individuals->individual!=individual && individuals->next == NULL) {
+else if(individuals->next == NULL) 
       return;
-}
-    struct IndividualNode *current=malloc(sizeof (struct IndividualNode));
-    struct IndividualNode *prev=malloc(sizeof (struct IndividualNode));
-    struct IndividualNode *hop=malloc(sizeof (struct IndividualNode));
-    current= individuals;
-   
-   while(current->next != NULL && (current->individual!=individual)) {
-      prev = current;
-      current = current->next;
-   }        
+    struct IndividualNode *cur=individuals;
+    struct IndividualNode *prev; 
+   while(cur->next != NULL &&cur->next->individual!=NULL&& cur->next->individual->key!=individual->key) {
+       prev=cur;
+       cur = cur->next;
+   }
+  if(cur->next==NULL||cur->next->individual==NULL)
+    return;
 
-   if(current->individual==individual) {
-       hop=prev->next;
-      prev->next = hop->next;
-      free(current);
-   } 
+   del=cur; 
+   prev->next=cur->next; 
+   free(del);
      
 
 }
@@ -124,25 +124,14 @@ else if(individuals->individual!=individual && individuals->next == NULL) {
  */
 
 void printIndividuals(struct IndividualNode *individuals){
-    if(individuals==NULL||individuals->individual==NULL)
+    struct IndividualNode *ind=individuals; 
+
+     while(ind!=NULL&&ind->individual!=NULL)
         {
-           printf("no individuals\n");
-            return;
+            printIndividual(ind->individual);
+           
+            ind=ind->next;
         }
-
-       printf("\nstate: %d\nx: %d\ny: %d\n#: %d\n",(int) individuals->individual->state,
-       individuals->individual->point.x,
-       individuals->individual->point.y,
-       individuals->individual->country->name);
-    
-    while(individuals->next!=NULL){
-    printf("\nstate: %d\nx: %d\ny: %d\n#: %d\n",(int) individuals->next->individual->state,
-       individuals->next->individual->point.x,
-       individuals->next->individual->point.y,
-       individuals->next->individual->country->name);
-
-       individuals->next=individuals->next->next;
-    }
 
 
 }

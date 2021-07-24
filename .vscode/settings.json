@@ -3,6 +3,7 @@
         "country.h": "c",
         "world.h": "c",
         "stdio.h": "c",
-        "distancecalculation.h": "c"
+        "distancecalculation.h": "c",
+        "individual.h": "c"
     }
 }

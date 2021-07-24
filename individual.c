@@ -9,7 +9,7 @@
  * @param y height in the rectangle
  * @return Individual created
  */
-struct Individual createHealthyIndividual(int x,int y)
+struct Individual createHealthyIndividual(int x,int y,int key)
 {
     struct Individual individual;
 
@@ -18,6 +18,7 @@ struct Individual createHealthyIndividual(int x,int y)
     individual.counter = 0;
     individual.state = healthy;
     individual.hasAlreadyMoved=0;
+    individual.key=key;
     
 
     return individual;
@@ -30,7 +31,7 @@ struct Individual createHealthyIndividual(int x,int y)
  * @param y height in the rectangle
  * @return Individual created
  */
-struct Individual createInfectedIndividual(int x,int y)
+struct Individual createInfectedIndividual(int x,int y,int key)
 {
     struct Individual individual;
 
@@ -39,6 +40,7 @@ struct Individual createInfectedIndividual(int x,int y)
     individual.counter = 0;
     individual.state = infected;
     individual.hasAlreadyMoved=0;
+    individual.key=key;
     
 
     return individual;
@@ -141,7 +143,7 @@ void updateCountry(struct Individual *individual, struct Country *newCountry)
     removeIndividual(individual->country->individuals,individual); // remove the individual from the list inside the old country
     individual->country = newCountry;//Update the reference to the country inside the individual
    
-    addIndividual(newCountry->individuals,individual); //Add the individual in the list inside the new country
+    //addIndividual(newCountry->individuals,individual); //Add the individual in the list inside the new country
 
 
 }
@@ -163,3 +165,4 @@ void printIndividual(struct Individual *individual){
 void resetTheMovement(struct Individual *individual){
     individual->hasAlreadyMoved=0;
 }
+

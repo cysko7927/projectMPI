@@ -151,22 +151,26 @@ int main(int argc, char const *argv[])
       if (my_rank == 0){printIndividuals(country.individuals);}
 
   }
-   printf("movimento_inizia");
+
+  struct IndividualNode *individuals; 
+
   for(int i=0;i<numOfCountries;i++){
+      individuals=world.countries[i].individuals;
       //for each individual of each contry do the movement and then print the individual and the directions
-      while(world.countries[i].individuals!=NULL&&world.countries[i].individuals->individual!=NULL) {
-        if(world.countries[i].individuals->individual->hasAlreadyMoved==0){
-        doMovement(world.countries[i].individuals->individual,world);
-        if (my_rank == 0){printIndividual(world.countries[i].individuals->individual);}
-        if (my_rank == 0){printDirection(world.countries[i].individuals->individual->movement.direction);}
-      }
-        world.countries[i].individuals=world.countries[i].individuals->next;
-      }
+      while(individuals!=NULL&&individuals->individual!=NULL) {
+       if(individuals->individual->hasAlreadyMoved==0){
+         doMovement(individuals->individual,world);
+     //     if (my_rank == 0){printIndividual(individuals->individual);}
+     //     if (my_rank == 0){printDirection(individuals->individual->movement.direction);}
+    }
+        individuals=individuals->next;
+     }
      
   }
-  
- printf("movimento_finito");
+
+
  int elapsedSeconds=0;
+ 
  struct Individual **allIndividuals = malloc((numOfIndividuals)*sizeof(struct Individual*));
  struct Distance *distances=malloc((numOfIndividuals-1)*sizeof(struct Distance)); //Le distanze sono sempre N-1 perché va escluso sempre il primo punto che si prende per calcolare le distanze
  unsigned int bool=0;
@@ -174,25 +178,29 @@ int main(int argc, char const *argv[])
  MPI_Barrier(MPI_COMM_WORLD);
  int j = 0;
 
-printf("\nbreak50\n");
+struct IndividualNode *individuals2; 
+
 
     //
         //save all the individuals into a list
        
-    struct IndividualNode *individuals; 
+ 
     printf("Inizio creazione array individui\n");
     for(int i=0;i<numOfCountries;i++){
-        individuals=world.countries[i].individuals;
-        while(individuals!=NULL&&individuals->individual!=NULL)
+        individuals2=world.countries[i].individuals;
+        while(individuals2!=NULL&&individuals2->individual!=NULL)
         {
-            printIndividual(individuals->individual);
-            allIndividuals[j] = individuals->individual;
+            printIndividual(individuals2->individual);
+            allIndividuals[j] = individuals2->individual;
             j++;
-            individuals=individuals->next;
+            individuals2=individuals2->next;
         }
     }
 
     printf("Fine creazione array individui\n");
+
+
+    return;
     //-------------------each process manages part of all the individuals
 
     int answer;
@@ -375,7 +383,7 @@ void addIndividuals(struct World*world, int numOfIndividuals, int numOfInfectedI
                 struct Individual *individual;
                 individual=malloc(sizeof(struct Individual));
                 if(restOfInfectedPeople<=0)
-                *individual=createHealthyIndividual(pickvaluex(world->countries,i),pickvaluey(world->countries,i));
+                *individual=createHealthyIndividual(pickvaluex(world->countries,i),pickvaluey(world->countries,i),restOfPeople);
                
     
                 else
@@ -385,13 +393,13 @@ void addIndividuals(struct World*world, int numOfIndividuals, int numOfInfectedI
                     //if the individual is infected we've to decrease the number of infected that needs to be placed
                     if(bool==1){
                         individual->state==infected;
-                        *individual=createInfectedIndividual(pickvaluex(world->countries,i),pickvaluey(world->countries,i));
+                        *individual=createInfectedIndividual(pickvaluex(world->countries,i),pickvaluey(world->countries,i),restOfPeople);
                 
                         restOfInfectedPeople--;
                     
                     }
                     else{
-                        *individual=createHealthyIndividual(pickvaluex(world->countries,i),pickvaluey(world->countries,i));
+                        *individual=createHealthyIndividual(pickvaluex(world->countries,i),pickvaluey(world->countries,i),restOfPeople);
                         restOfHealthyPeople--;
                     }
                 }
@@ -414,7 +422,7 @@ void addIndividuals(struct World*world, int numOfIndividuals, int numOfInfectedI
 
 
             else return;
-             //all the individuals have been distributed
+             
 
         }
 
@@ -508,6 +516,7 @@ if(dir!=STOP)
 }
 
 
+
 //nb if the individual is on the line between two countries it doesn't change its country value
 // until it doesn't surpass the line
 void checkIfCountryHasBeenChanged(struct Individual *individual,struct World world)  {
@@ -534,7 +543,6 @@ void checkIfCountryHasBeenChanged(struct Individual *individual,struct World wor
         }
     }
 }
-
 //if the direction is possible then change the indidiual's coordinates
 void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World world,struct Individual *individual){
     //UP,DOWN,LEFT,RIGHT,UPLEFT,UPRIGHT,DOWNLEFT,DOWNRIGHT,
@@ -555,7 +563,7 @@ void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World wor
             setCoordinates(individual,individual->point.x,individual->point.y+individual->movement.v);
             return;
         }
-       return checkIfPossibleOtherwiseChange(DOWN,numberOfAttemps++,world,individual);     
+       return checkIfPossibleOtherwiseChange(DOWN,numberOfAttemps++,world,&individual);     
             
     case DOWN:
         /*
@@ -568,7 +576,7 @@ void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World wor
             setCoordinates(individual,individual->point.x,individual->point.y-individual->movement.v);
             return;
         }
-       return checkIfPossibleOtherwiseChange(UP,numberOfAttemps++,world,individual);    
+       return checkIfPossibleOtherwiseChange(UP,numberOfAttemps++,world,&individual);    
 
     case LEFT:
         /*
@@ -581,7 +589,7 @@ void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World wor
             setCoordinates(individual,individual->point.x-individual->movement.v,individual->point.y);
             return;
         }
-       return checkIfPossibleOtherwiseChange(RIGHT,numberOfAttemps++,world,individual);     
+       return checkIfPossibleOtherwiseChange(RIGHT,numberOfAttemps++,world,&individual);     
 
     case RIGHT:
         /*
@@ -594,7 +602,7 @@ void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World wor
             setCoordinates(individual,individual->movement.v+individual->point.x,individual->point.y);
             return;
         }
-       return checkIfPossibleOtherwiseChange(DOWN,numberOfAttemps++,world,individual);     
+       return checkIfPossibleOtherwiseChange(DOWN,numberOfAttemps++,world,&individual);     
 
     case UPLEFT:
         /*
@@ -606,7 +614,7 @@ void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World wor
             setCoordinates(individual,individual->point.x-individual->movement.v,individual->movement.v+individual->point.y);
             return;
         }
-       return checkIfPossibleOtherwiseChange(DOWNRIGHT,numberOfAttemps++,world,individual);
+       return checkIfPossibleOtherwiseChange(DOWNRIGHT,numberOfAttemps++,world,&individual);
 
     case UPRIGHT:
         /*
@@ -618,7 +626,7 @@ void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World wor
             setCoordinates(individual,individual->movement.v+individual->point.x,individual->movement.v+individual->point.y);
             return;
         }
-        return checkIfPossibleOtherwiseChange(DOWNLEFT,numberOfAttemps++,world,individual);
+        return checkIfPossibleOtherwiseChange(DOWNLEFT,numberOfAttemps++,world,&individual);
     
     case DOWNLEFT:
         /*
@@ -630,7 +638,7 @@ void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World wor
             setCoordinates(individual,individual->point.x-individual->movement.v,individual->point.y-individual->movement.v);
             return;
         }
-        return checkIfPossibleOtherwiseChange(UPRIGHT,numberOfAttemps++,world,individual);
+        return checkIfPossibleOtherwiseChange(UPRIGHT,numberOfAttemps++,world,&individual);
 
     case DOWNRIGHT:
         /*
@@ -642,7 +650,7 @@ void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World wor
             setCoordinates(individual,individual->movement.v+individual->point.x,individual->point.y-individual->movement.v);
             return;
         }
-        return checkIfPossibleOtherwiseChange(UPLEFT,numberOfAttemps++,world,individual);
+        return checkIfPossibleOtherwiseChange(UPLEFT,numberOfAttemps++,world,&individual);
 
 
     default:individual->movement.direction=STOP;
