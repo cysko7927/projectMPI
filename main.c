@@ -144,24 +144,28 @@ int main(int argc, char const *argv[])
     //--------- add individuals to the world
 
  addIndividuals(&world, numOfIndividuals,  numOfInfectedIndividuals,speed);
+
   for(int i=0; i<world.numOfCountries;i++){
 
       struct Country country=getCountries(world)[i];
       if (my_rank == 0){printIndividuals(country.individuals);}
 
   }
-  
+   printf("movimento_inizia");
   for(int i=0;i<numOfCountries;i++){
       //for each individual of each contry do the movement and then print the individual and the directions
       while(world.countries[i].individuals!=NULL&&world.countries[i].individuals->individual!=NULL) {
+        if(world.countries[i].individuals->individual->hasAlreadyMoved==0){
         doMovement(world.countries[i].individuals->individual,world);
         if (my_rank == 0){printIndividual(world.countries[i].individuals->individual);}
         if (my_rank == 0){printDirection(world.countries[i].individuals->individual->movement.direction);}
+      }
         world.countries[i].individuals=world.countries[i].individuals->next;
       }
+     
   }
   
-
+ printf("movimento_finito");
  int elapsedSeconds=0;
  struct IndividualNode *allIndividuals;
  struct Distance *distances=malloc((numOfIndividuals-1)*sizeof(struct Distance)); //Le distanze sono sempre N-1 perché va escluso sempre il primo punto che si prende per calcolare le distanze
