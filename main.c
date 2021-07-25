@@ -12,6 +12,9 @@
 
     2) add individual aggiunge più volte (quando cambia il paese) lo stesso individuo -> 
         messo un return dopo l'invocazione di updateCountry ora al massimo raddoppia l'individuo
+        --> SISTEMATO 
+            ---> altro problema: se individuo eliminato da caso 1 individual.state  e le posizioni non si mantengono correttamente
+                ----> forse ci è più comodo creare una copia dell'individuo da aggiungere eliminare l'individuo ed aggiungere la copia
     
     3) la remove a volte provoca un seg fault
         ---> caso 2 della remove da rifare --> SISTEMATO
@@ -213,19 +216,6 @@ struct IndividualNode *individuals2;
     printf("Fine creazione array individui\n");
 
 
- for(int i=0;i<numOfCountries;i++){
-      individuals=world.countries[i].individuals;
-      //for each individual of each contry do the movement and then print the individual and the directions
-      while(individuals!=NULL&&individuals->individual!=NULL) {
-       
-        
-          if (my_rank == 0){printIndividual(individuals->individual);}
-          
-    
-        individuals=individuals->next;
-     }
-     
-  }
 
 
 
