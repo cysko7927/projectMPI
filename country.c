@@ -98,13 +98,9 @@ printf("--inizio eliminazione di %d da %d\n",individual->key,individual->country
                 return ;
             }
             else{
-               printf("---%d è stato eliminato  caso:2\n",individual->key);
-              
-               hop=individuals->next;
-               individuals->individual=hop->individual;
-               individuals->next=hop->next;
-               free(individuals->individual);
-               return;
+               
+              printf("\n Node deleted from the begining ...");  
+              //da rifare
             }
 
         } 

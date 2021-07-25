@@ -8,16 +8,15 @@
     WARNINGS   
 
     1) a volte non tutti gli individui richiedono il movimento anche se possono -> 
-        tutte le volte che succede c'è anche un cambio di paese in atto
+        tutte le volte che succede c'è anche un cambio di paese in atto --- > SISTEMATO 
 
     2) add individual aggiunge più volte (quando cambia il paese) lo stesso individuo -> 
         messo un return dopo l'invocazione di updateCountry ora al massimo raddoppia l'individuo
     
     3) la remove a volte provoca un seg fault
-        ---> caso 1 della remove non elimina effettivamente l'individuo
+        ---> caso 2 della remove da rifare
     
-    -----> 2+3 magari scrivere un metodo apposta per scambiare l'elemento tra le liste invece di usare remove & add ?
-        ---> anche perchè se rimuoviamo l'individuo poi non possiamo più aggiungerlo al nuovo paese
+    
 */
                           
 
@@ -550,7 +549,8 @@ void checkIfCountryHasBeenChanged(struct Individual *individual,struct World wor
                  printf("\n l'individuo %d ha richiesto l'update dello stato\n",individual->key);
                 //then we've found the right country
                 
-                updateCountry(individual,&countries[i]);
+                //updateCountry(individual,&countries[i]);
+                removeIndividual(individual->country->individuals,individual);
                return;
 
         
