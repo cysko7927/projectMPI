@@ -80,6 +80,7 @@ void removeIndividual(struct IndividualNode *individuals,struct Individual *indi
 printf("--inizio eliminazione di %d da %d\n",individual->key,individual->country->name);
      
      struct IndividualNode *del;
+     struct Individual *delIndividual;
      struct IndividualNode *hop;
 
     if(individuals==NULL||individuals->individual==NULL)
@@ -88,41 +89,54 @@ printf("--inizio eliminazione di %d da %d\n",individual->key,individual->country
     if(individuals->individual->key==individual->key)
         {
             if (individuals->next!=NULL){
-                del=individuals->individual;
+                delIndividual=individuals->individual;
                 hop=individuals->next;
-                individuals->individual=hop;
+                individuals->individual=hop->individual;
                 individuals->next=hop->next;
                 printf("---%d è stato eliminato  caso:1\n",individual->key);
-                free(del);
+                free(delIndividual);
                 return ;
             }
             else{
                printf("---%d è stato eliminato  caso:2\n",individual->key);
+              
+               hop=individuals->next;
+               individuals->individual=hop->individual;
+               individuals->next=hop->next;
                free(individuals->individual);
-               individuals->individual=individuals->next;
                return;
             }
 
         } 
 
-else if(individuals->next == NULL) 
+else if(individuals->next == NULL||individuals->next->individual==NULL) 
       return;
-    struct IndividualNode *cur=individuals;
-   while(cur->next != NULL &&cur->next->individual!=NULL&& cur->next->individual->key!=individual->key) 
-       cur = cur->next;
-   
-  if(cur->next==NULL||cur->next->individual==NULL)
-    return;
 
-   del=cur->next; 
-   hop=del->next;
-   cur->next=hop;
-   cur->next->next=hop->next;
-   printf("---%d è stato eliminato   caso:3\n",individual->key);
-   free(del->individual);
+
+   struct IndividualNode *temp=individuals; 
+   struct IndividualNode *prev; 
+   
+
+    while (temp->individual->key!= individual->key&&temp!=NULL&&temp->individual!=NULL) {
+        prev=temp;
+      temp = temp->next;
+    }
+
+    //If the position is more than the number of nodes, throw exception:
+    if (temp == NULL ||temp->individual==NULL|| temp->next == NULL) {
+      return;
+    }
+
+    //Unlink the node from the linked list
+    struct IndividualNode *next = temp->next;
+    //free(temp);
+    prev->next = next;
+    printf("---%d è stato eliminato  caso:3\n",individual->key);
+
+  }
      
 
-}
+
 
 /**
  * @brief method used for end-day statistics
