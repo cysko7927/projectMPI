@@ -47,6 +47,7 @@ if(individuals==NULL){
     individuals=malloc(sizeof(struct IndividualNode));
     individuals->individual=individual;
     individuals->next=NULL;
+    return;
 }
 
 
@@ -54,6 +55,7 @@ else if(individuals->individual == NULL){
     
         individuals->individual=individual;
         individuals->next=NULL;
+         return;
     }
     
 else
@@ -65,6 +67,7 @@ else
             current = current->next;
         
         current->next=newIndividual;
+         return;
                
     }
   

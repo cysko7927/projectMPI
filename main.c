@@ -549,8 +549,8 @@ void checkIfCountryHasBeenChanged(struct Individual *individual,struct World wor
                  printf("\n l'individuo %d ha richiesto l'update dello stato\n",individual->key);
                 //then we've found the right country
                 
-                //updateCountry(individual,&countries[i]);
-                removeIndividual(individual->country->individuals,individual);
+                updateCountry(individual,&countries[i]);
+                
                return;
 
         
