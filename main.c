@@ -213,6 +213,22 @@ struct IndividualNode *individuals2;
     printf("Fine creazione array individui\n");
 
 
+ for(int i=0;i<numOfCountries;i++){
+      individuals=world.countries[i].individuals;
+      //for each individual of each contry do the movement and then print the individual and the directions
+      while(individuals!=NULL&&individuals->individual!=NULL) {
+       
+        
+          if (my_rank == 0){printIndividual(individuals->individual);}
+          
+    
+        individuals=individuals->next;
+     }
+     
+  }
+
+
+
     return;//-----------------------------------------------------------------------aggiunto per il momento
     //-------------------each process manages part of all the individuals
 

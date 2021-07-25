@@ -92,6 +92,7 @@ printf("--inizio eliminazione di %d da %d\n",individual->key,individual->country
     if(individuals->individual->key==individual->key)
         {
             if (individuals->next!=NULL){
+        
                 delIndividual=individuals->individual;
                 hop=individuals->next;
                 individuals->individual=hop->individual;
