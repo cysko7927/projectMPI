@@ -14,7 +14,7 @@
         messo un return dopo l'invocazione di updateCountry ora al massimo raddoppia l'individuo
     
     3) la remove a volte provoca un seg fault
-        ---> caso 2 della remove da rifare
+        ---> caso 2 della remove da rifare --> SISTEMATO
     
     
 */

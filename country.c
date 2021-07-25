@@ -99,8 +99,10 @@ printf("--inizio eliminazione di %d da %d\n",individual->key,individual->country
             }
             else{
                
-              printf("\n Node deleted from the begining ...");  
-              //da rifare
+               printf("---%d è stato eliminato  caso:2\n",individual->key);  
+                individuals->individual=NULL;
+              return;
+              
             }
 
         } 
