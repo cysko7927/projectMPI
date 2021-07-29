@@ -219,19 +219,12 @@ struct IndividualNode *individuals2;
     printf("Fine creazione array individui\n");
 
 
-
-
-
-    return;//-----------------------------------------------------------------------aggiunto per il momento
     //-------------------each process manages part of all the individuals
 
     int answer;
     int exit = 0;
 
-    for (int h = 0; h < numOfIndividuals; h++)
-    {
-        printIndividual(allIndividuals[h]);
-    }
+    
     
 
             

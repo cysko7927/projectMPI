@@ -14,7 +14,7 @@
  */
 
 void calculateDistance(struct Individual *allIndividual[],struct Distance allDistance[],unsigned int nTotalIndividual,unsigned int keyIndividual)
-{
+{ printf("\ncalcolo distanza\n");
     
     int my_rank, world_size; 
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
