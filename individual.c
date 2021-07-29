@@ -141,7 +141,17 @@ void setCoordinates(struct Individual *individual, int x,int y)
 void updateCountry(struct Individual *individual, struct Country *newCountry)
 {
     printf("\n stato rilevato: %d\n",individual->state);
-    addIndividual(newCountry->individuals,individual); //Add the individual in the list inside the new country
+
+    struct Individual *newIndividual=(struct Individual*)malloc(sizeof(struct Individual));
+    newIndividual->counter=individual->counter;
+    newIndividual->country=newCountry;
+    newIndividual->hasAlreadyMoved=1;
+    newIndividual->key=individual->key;
+    newIndividual->movement=individual->movement;
+    newIndividual->point=individual->point;
+    newIndividual->state=individual->state;
+    
+    addIndividual(newCountry->individuals,newIndividual); //Add the individual in the list inside the new country
     removeIndividual(individual->country->individuals,individual); // remove the individual from the list inside the old country
 }
 void printIndividual(struct Individual *individual){

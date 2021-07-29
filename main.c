@@ -15,6 +15,8 @@
         --> SISTEMATO 
             ---> altro problema: se individuo eliminato da caso 1 individual.state  e le posizioni non si mantengono correttamente
                 ----> forse ci è più comodo creare una copia dell'individuo da aggiungere eliminare l'individuo ed aggiungere la copia
+                    --> SISTEMATO
+                        ---> funziona anche la stampa dell'array
     
     3) la remove a volte provoca un seg fault
         ---> caso 2 della remove da rifare --> SISTEMATO
@@ -64,6 +66,7 @@ int main(int argc, char const *argv[])
     int speed=atoi(argv[7]);
     int minDistance=atoi(argv[8]);
     int time=atoi(argv[9]);;
+    
    
    printf("%s\n",argv[1]);
    printf("%d\n",numOfIndividuals);
