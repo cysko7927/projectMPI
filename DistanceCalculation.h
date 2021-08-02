@@ -10,10 +10,11 @@ struct Distance
     unsigned int x;
     unsigned int y;
     unsigned int key;
+    StateIndividual state;
     double distance;
 };
 
 void calculateDistance(struct Individual *allIndividual[],struct Distance allDistance[],unsigned int nTotalIndividual,unsigned int keyIndividual);
-int checkIfNearInfected(struct Distance *distances,struct IndividualNode *allIndividuals,int minDistance,int indexIndividual);
+int checkIfNearInfected(struct Distance *distances,int minDistance,int nTotalIndividual);
 MPI_Datatype defineDistanceForMPI();
 #endif

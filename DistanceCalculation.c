@@ -48,6 +48,7 @@ void calculateDistance(struct Individual *allIndividual[],struct Distance allDis
                 distanceGlobal[j].x = allIndividual[i]->point.x;
                 distanceGlobal[j].y = allIndividual[i]->point.y;
                 distanceGlobal[j].key = i;
+                distanceGlobal[j].state = allIndividual[i]->state;
                 distanceGlobal[j].distance = 0;
                 j++;
             }
@@ -105,6 +106,7 @@ void calculateDistance(struct Individual *allIndividual[],struct Distance allDis
         for (size_t i = 0; i < nTotalIndividual -1; i++)
         {
             allDistance[i].key = distanceGlobal[i].key;
+            allDistance[i].state = distanceGlobal[i].state;
             allDistance[i].x = distanceGlobal[i].x;
             allDistance[i].y = distanceGlobal[i].y;
             allDistance[i].distance = distanceGlobal[i].distance;
@@ -155,40 +157,23 @@ MPI_Datatype defineDistanceForMPI()
 
 /**
  * @brief check if the individual is near an infected individual
- * @param allIndividual list of individuals
- * @param distance distance of the individual from allIndividual
+ * @param distance distance of an individual from allIndividual
  * @param minDistance distance to keep in order to not being infected by an infected individual
- * @param indexIndividual index of the individual to be considered
- * @return 1 if near an infected 0 otherwise
+ * @param nTotalIndividual number of the individuals in the system
+ * @return the number of infected individuals
  */
 
-int checkIfNearInfected(struct Distance *distances,struct IndividualNode *allIndividuals,int minDistance,int indexIndividual){
-    int i = 0;
-    int j = 0;
-    struct IndividualNode *cur=allIndividuals;
+int checkIfNearInfected(struct Distance *distances,int minDistance,int nTotalIndividual){
 
+    int count = 0;
         //scan all the individuals
-    while(cur!=NULL&&cur->individual!=NULL){
-        //--if the counter is equal to indexIndividual then we have to skip the confront
-            //we can't compare the indidividual with itself
-            if(indexIndividual==j){
-                j++;
-                cur=cur->next;
-            }
-            //compare distances 
-            if(distances[i].distance<=minDistance&&cur->individual->state==infected)
-            {
-            //then the individual is near an infected and we can stop here
-                return 1;
-            }
+    for(int i = 0; i<nTotalIndividual-1;i++)
+    {
 
-        //update di i
-         i++;
-        //update di cur
-        cur=cur->next;
-        j++;
-        
+            //compare distances 
+            if(distances[i].distance<=minDistance && distances[i].state==infected)
+                count++;
     }
-    //the individual isn't near to any infected individual
-    return 0;
+
+    return count;
 }
