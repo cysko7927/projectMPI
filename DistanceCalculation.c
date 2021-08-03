@@ -69,7 +69,7 @@ void calculateDistance(struct Individual *allIndividual[],struct Distance allDis
         localDistances[i].distance = sqrt(distanceSquare);
 
 
-        printf("Process:%d x= %ld,y = %ld i = %u\n", my_rank, xSecondPoint, ySecondPoint,i);
+        //printf("Process:%d x= %ld,y = %ld i = %u\n", my_rank, xSecondPoint, ySecondPoint,i);
         
     }
 
@@ -98,7 +98,7 @@ void calculateDistance(struct Individual *allIndividual[],struct Distance allDis
                 long int ySecondPoint = distanceGlobal[nTotalIndividual-2 -i].y;
                 double distanceSquare = (double) (xSecondPoint -xFirstPoint)*(xSecondPoint-xFirstPoint) + (ySecondPoint - yFirstPoint)*(ySecondPoint-yFirstPoint);
                 distanceGlobal[nTotalIndividual-2 -i].distance = sqrt(distanceSquare);
-                printf("Process:%d x= %ld,y = %ld ,dist= %lf\n", my_rank, xSecondPoint, ySecondPoint,distanceGlobal[nTotalIndividual-2 -i].distance);
+                //printf("Process:%d x= %ld,y = %ld ,dist= %lf\n", my_rank, xSecondPoint, ySecondPoint,distanceGlobal[nTotalIndividual-2 -i].distance);
             }
             
         }
@@ -118,6 +118,15 @@ void calculateDistance(struct Individual *allIndividual[],struct Distance allDis
 
     free(localDistances);
     
+    if (my_rank == 0)
+    {   
+        printf("Calculated Distances for individual with coordinate: x=%ld y=%ld\n",xFirstPoint,yFirstPoint);
+
+        for (size_t i = 0; i < nTotalIndividual -1; i++)
+        {
+            printf("For x=%ld,y=%ld the distance is %lf\n",allDistance[i].x,allDistance[i].y,allDistance[i].distance);
+        }
+    }
 }
 
 

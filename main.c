@@ -240,7 +240,7 @@ struct IndividualNode *individuals2;
     
     while (exit==0)
     {
-        int step = 0;
+        int step = 1;
         int stepTotal = secondsInADay/time;
         elapsedSeconds=0;
 
