@@ -7,19 +7,10 @@
 /*
     WARNINGS   
 
-    1) a volte non tutti gli individui richiedono il movimento anche se possono -> 
-        tutte le volte che succede c'è anche un cambio di paese in atto --- > SISTEMATO 
+    1) PROBLEMA: richiesta se passare al giorno successivo compare solo dopo che si ha mandato una risposta!
 
-    2) add individual aggiunge più volte (quando cambia il paese) lo stesso individuo -> 
-        messo un return dopo l'invocazione di updateCountry ora al massimo raddoppia l'individuo
-        --> SISTEMATO 
-            ---> altro problema: se individuo eliminato da caso 1 individual.state  e le posizioni non si mantengono correttamente
-                ----> forse ci è più comodo creare una copia dell'individuo da aggiungere eliminare l'individuo ed aggiungere la copia
-                    --> SISTEMATO
-                        ---> funziona anche la stampa dell'array
-    
-    3) la remove a volte provoca un seg fault
-        ---> caso 2 della remove da rifare --> SISTEMATO
+    2) la remove a volte provoca un seg fault
+        ---> caso 1 della remove da rifare --> 
     
     
 */
@@ -247,9 +238,35 @@ struct IndividualNode *individuals2;
      while (elapsedSeconds<secondsInADay)
       {
         if(my_rank == 0){printf("Step in a day: %d / %d\n",step,stepTotal);}
-        for(int i=0;i<numOfIndividuals;i++)
+      
+
+        for(int i=0;i<numOfCountries;i++){
+        cur=world.countries[i].individuals;
+        //here we've to reset all the movements
+        while(cur!=NULL&&cur->individual!=NULL){
+            cur->individual->hasAlreadyMoved=0;
+            cur=cur->next;
+        }
+        }
+
+         for(int i=0;i<numOfCountries;i++){
+        cur=world.countries[i].individuals;
+ //the two while cycle can't be unified otherwise when an individual changes country it could move another time in the same turn
+       while (cur!=NULL&&cur->individual!=NULL)
         {
-            calculateDistance(allIndividuals,distances,numOfIndividuals,i);
+              
+            if(cur->individual->hasAlreadyMoved==0)
+                doMovement(cur->individual,world,time);
+                
+                cur=cur->next;
+        }
+    }
+
+      for(int i=0;i<numOfIndividuals;i++)
+        {
+           updateIndividualsArray(allIndividuals,world,numOfCountries);
+           calculateDistance(allIndividuals,distances,numOfIndividuals,i);
+            
             //Solo il processo 0 deve calcolare il numero di vicini e poi inviare bool a tutti gli
             //altri processi con un broadcast
             
@@ -263,24 +280,7 @@ struct IndividualNode *individuals2;
             updateState(bool,allIndividuals[i],time);
 
         }
-
-        cur=individuals;
-
-        //here we've to reset all the movements
-        while(cur!=NULL&&cur->individual!=NULL){
-            resetTheMovement(&cur->individual);
-            cur=cur->next;
-        }
-        cur->individual;
-
-        //the two while cycle can't be unified otherwise when an individual changes country it could move another time in the same turn
-        while (cur!=NULL&&cur->individual!=NULL)
-        {
-            if(cur->individual->hasAlreadyMoved==0)
-                doMovement(&cur->individual,world,time);
-            cur=cur->next;
-        }
-
+        
         MPI_Barrier(MPI_COMM_WORLD);
         elapsedSeconds+=time;
         step++;
@@ -311,11 +311,8 @@ struct IndividualNode *individuals2;
      
     }
 
-
     MPI_Finalize();
 
-  
-    
 }
 
 
@@ -575,7 +572,7 @@ void checkIfCountryHasBeenChanged(struct Individual *individual,struct World wor
 }
 //if the direction is possible then change the indidiual's coordinates
 void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World world,struct Individual *individual,int time){
-    //UP,DOWN,LEFT,RIGHT,UPLEFT,UPRIGHT,DOWNLEFT,DOWNRIGHT,
+      //UP,DOWN,LEFT,RIGHT,UPLEFT,UPRIGHT,DOWNLEFT,DOWNRIGHT,
     int numberOfAttemps=attempts;
 
     if(attempts<2){
@@ -691,4 +688,23 @@ void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World wor
     else individual->movement.direction=STOP; //if both direction and the oppesed direction are not possible then the individual is stooped for the round
 
     return;
+}
+
+void updateIndividualsArray(struct Individual *allIndividuals[],struct World world,int numOfCountries){
+    int j=0;
+    struct IndividualNode *individuals2; 
+     printf("Inizio update array individui\n");
+    for(int i=0;i<numOfCountries;i++){
+        individuals2=world.countries[i].individuals;
+        while(individuals2!=NULL&&individuals2->individual!=NULL)
+        {
+            printIndividual(individuals2->individual);
+            allIndividuals[j] = individuals2->individual;
+            j++;
+            individuals2=individuals2->next;
+        }
+    }
+
+    printf("Fine update array individui\n");
+
 }
