@@ -53,7 +53,7 @@ struct Individual createInfectedIndividual(int x,int y,int key)
  * @param neighborsInfected number of the infected close to the individual 
  * @param individual pointer to the individual with the state to update
  */
-void updateState(unsigned int neighborsInfected, struct Individual * individual)
+void updateState(unsigned int neighborsInfected, struct Individual * individual, int time)
 {
     switch (individual->state)
     {
@@ -63,7 +63,7 @@ void updateState(unsigned int neighborsInfected, struct Individual * individual)
             individual->counter = 0;
         }else
         {
-            individual->counter++;
+            individual->counter+=time;
             individual->state = infectionsInProgress; //Start the infection in the individual
         }
         break;
@@ -82,7 +82,7 @@ void updateState(unsigned int neighborsInfected, struct Individual * individual)
         }
         else// If there are infected neighbors and it's not been 10 minutes
         {
-            individual->counter++;
+            individual->counter+=time;
         }
         
         break;
@@ -91,7 +91,7 @@ void updateState(unsigned int neighborsInfected, struct Individual * individual)
 
         if (individual ->counter < secondsInADay*10) //if it's not been 10 days
         {
-            individual->counter++;
+            individual->counter+=time;
         }
         else //Else if 10 days have passed
         {
@@ -105,7 +105,7 @@ void updateState(unsigned int neighborsInfected, struct Individual * individual)
 
             if (individual ->counter < secondsInAMonth*3)//if it's not been 3 months
             {
-                individual->counter++;
+                individual->counter+=time;
             }
             else //Else if 3 months have passed
             {
