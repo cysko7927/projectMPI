@@ -65,11 +65,9 @@ int main(int argc, char const *argv[])
     int countryWidht=atoi(argv[6]);
     int speed=atoi(argv[7]);
     int minDistance=atoi(argv[8]);
-    int time=atoi(argv[9]);;
+    int time=atoi(argv[9]);
     
    
-   printf("%s\n",argv[1]);
-   printf("%d\n",numOfIndividuals);
 
 
     if(numOfIndividuals<0||
@@ -219,12 +217,18 @@ struct IndividualNode *individuals2;
     printf("Fine creazione array individui\n");
 
 
+
+
+
     //-------------------each process manages part of all the individuals
 
     int answer;
     int exit = 0;
 
-    
+    for (int h = 0; h < numOfIndividuals; h++)
+    {
+        printIndividual(allIndividuals[h]);
+    }
     
 
             
@@ -236,21 +240,27 @@ struct IndividualNode *individuals2;
     
     while (exit==0)
     {
+        int step = 1;
+        int stepTotal = secondsInADay/time;
+        elapsedSeconds=0;
+
      while (elapsedSeconds<secondsInADay)
       {
-        
+        if(my_rank == 0){printf("Step in a day: %d / %d\n",step,stepTotal);}
         for(int i=0;i<numOfIndividuals;i++)
         {
             calculateDistance(allIndividuals,distances,numOfIndividuals,i);
             //Solo il processo 0 deve calcolare il numero di vicini e poi inviare bool a tutti gli
             //altri processi con un broadcast
-            if(my_rank == 0){bool = checkIfNearInfected(distances,allIndividuals,minDistance,i);}
+            
+            if(my_rank == 0){bool = checkIfNearInfected(distances,minDistance,numOfIndividuals);}
+            
 
             MPI_Bcast(&bool,1,MPI_INT,0,MPI_COMM_WORLD);
 
             MPI_Barrier(MPI_COMM_WORLD);
 
-            updateState(bool,allIndividuals[i]);
+            updateState(bool,allIndividuals[i],time);
 
         }
 
@@ -272,8 +282,10 @@ struct IndividualNode *individuals2;
         }
 
         MPI_Barrier(MPI_COMM_WORLD);
-        elapsedSeconds=+time;
+        elapsedSeconds+=time;
+        step++;
       }
+      MPI_Barrier(MPI_COMM_WORLD);
         if (my_rank == 0)
         {
             printf("Do you wish to emulate another day? if so digit 1 ");
@@ -284,9 +296,8 @@ struct IndividualNode *individuals2;
 
         MPI_Bcast(&answer,1,MPI_INT,0,MPI_COMM_WORLD);
         
-        if(answer==1)
+        if(answer!=1)
         {
-            elapsedSeconds=0;
 
             if (my_rank == 0)
             {
