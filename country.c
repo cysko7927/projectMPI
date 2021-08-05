@@ -72,6 +72,23 @@ else
     }
   
 }
+/**
+ * @brief Add an existing individual to the country individuals list, if the list doesn't exists then it builds one   
+ * @param individuals list of individuals
+ * @param individual individual node that needs to be added to the individuals list 
+ */
+void addIndividualNode(struct IndividualNode *individuals,struct IndividualNode *individual){
+
+if(individual==NULL){
+    printf("Invalid IndividualNode");
+    return;
+}
+   
+    struct IndividualNode *temp=individuals;
+    individuals=&individual;
+    individuals->next=temp;
+   
+}
 
 /**
  * @brief remove an individual from an individuals list

@@ -140,19 +140,51 @@ void setCoordinates(struct Individual *individual, int x,int y)
  */
 void updateCountry(struct Individual *individual, struct Country *newCountry)
 {
-    printf("\n stato rilevato: %d\n",individual->state);
+    printf("\nl'individuo con id: %d cambia country",individual->key);
+    printf("\nDA country : %d\n",individual->country->name);
+    printf("\nA:\n country : %d\n",newCountry->name);
 
-    struct Individual *newIndividual=(struct Individual*)malloc(sizeof(struct Individual));
-    newIndividual->counter=individual->counter;
-    newIndividual->country=newCountry;
-    newIndividual->hasAlreadyMoved=1;
-    newIndividual->key=individual->key;
-    newIndividual->movement=individual->movement;
-    newIndividual->point=individual->point;
-    newIndividual->state=individual->state;
+
+    struct IndividualNode *individualNode;
+    struct IndividualNode *prec;
+    struct IndividualNode *cur;
+    struct Country *oldCountry=individual->country;
+
+    cur=oldCountry->individuals;
+    prec=cur;
+
+    if(cur==NULL||cur->individual==NULL)
+        return;
+
+    if(cur->individual->key==individual->key){
+        printf("update caso 1");
+        individualNode=cur;
+        oldCountry->individuals=individualNode->next;//removing the individual from the old country
+        addIndividualNode(newCountry->individuals,individualNode); //Add the individual in the list inside the new country
+        individual->country=newCountry;
+        printf("fine cambio stato");
+        return;
+    }
+
+      struct IndividualNode *current;
+      current=oldCountry->individuals;
+        while(current->next != NULL){
+            if(current->next->individual->key==individual->key)
+                break;
+            current = current->next;
+        }
+        
+    if(current->next==NULL)
+        return;
+     
+
+    individualNode=cur->next;
+    cur->next=individualNode->next;//removing the individual from the old country
     
-    addIndividual(newCountry->individuals,newIndividual); //Add the individual in the list inside the new country
-    removeIndividual(individual->country->individuals,individual); // remove the individual from the list inside the old country
+    addIndividualNode(newCountry->individuals,individualNode); //Add the individual in the list inside the new country
+    individual->country=newCountry;
+
+    printf("fine cambio stato");
 }
 void printIndividual(struct Individual *individual){
    
