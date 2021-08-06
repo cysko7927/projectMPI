@@ -240,9 +240,8 @@ struct IndividualNode *individuals2;
 
          for(int i=0;i<numOfIndividuals;i++){
  //the two  cycles can't be unified otherwise when an individual changes country it could move another time in the same turn
-      
-            if( allIndividuals[i]->hasAlreadyMoved==0)
-                doMovement( allIndividuals[i],world,time);
+          if( allIndividuals[i]->hasAlreadyMoved==0)
+               doMovement( allIndividuals[i],world,time);
                 
          
     }
@@ -534,7 +533,8 @@ if(dir==STOP)
 //nb if the individual is on the line between two countries it doesn't change its country value
 // until it doesn't surpass the line
 void checkIfCountryHasBeenChanged(struct Individual *individual,struct World world)  {
-   
+              
+
     struct Country *country=individual->country;
     if(individual->point.x>country->w.x||individual->point.x<country->x.x||individual->point.y>country->y.y||individual->point.y<country->x.y)
     {
@@ -565,9 +565,10 @@ void checkIfCountryHasBeenChanged(struct Individual *individual,struct World wor
 //if the direction is possible then change the indidiual's coordinates
 void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World world,struct Individual *individual){
        //UP,DOWN,LEFT,RIGHT,UPLEFT,UPRIGHT,DOWNLEFT,DOWNRIGHT,
+       printf("\ncontrollo direzione di:  %d\n",individual->key);
     int numberOfAttemps=attempts;
 
-    if(attempts<2){
+    if(numberOfAttemps<2){
 
     switch (dir)
     {
@@ -582,7 +583,8 @@ void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World wor
             setCoordinates(individual,individual->point.x,individual->point.y+individual->movement.v);
             return;
         }
-       return checkIfPossibleOtherwiseChange(DOWN,numberOfAttemps++,world,individual);     
+         
+       return checkIfPossibleOtherwiseChange(DOWN,numberOfAttemps+1,world,individual);     
             
     case DOWN:
         /*
@@ -595,7 +597,8 @@ void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World wor
             setCoordinates(individual,individual->point.x,individual->point.y-individual->movement.v);
             return;
         }
-       return checkIfPossibleOtherwiseChange(UP,numberOfAttemps++,world,individual);    
+      
+       return checkIfPossibleOtherwiseChange(UP,numberOfAttemps+1,world,individual);    
 
     case LEFT:
         /*
@@ -608,7 +611,7 @@ void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World wor
             setCoordinates(individual,individual->point.x-individual->movement.v,individual->point.y);
             return;
         }
-       return checkIfPossibleOtherwiseChange(RIGHT,numberOfAttemps++,world,individual);     
+       return checkIfPossibleOtherwiseChange(RIGHT,numberOfAttemps+1,world,individual);     
 
     case RIGHT:
         /*
@@ -621,7 +624,7 @@ void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World wor
             setCoordinates(individual,individual->movement.v+individual->point.x,individual->point.y);
             return;
         }
-       return checkIfPossibleOtherwiseChange(DOWN,numberOfAttemps++,world,individual);     
+       return checkIfPossibleOtherwiseChange(DOWN,numberOfAttemps+1,world,individual);     
 
     case UPLEFT:
         /*
@@ -633,7 +636,9 @@ void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World wor
             setCoordinates(individual,individual->point.x-individual->movement.v,individual->movement.v+individual->point.y);
             return;
         }
-       return checkIfPossibleOtherwiseChange(DOWNRIGHT,numberOfAttemps++,world,individual);
+                  printf("reset?");
+
+       return checkIfPossibleOtherwiseChange(DOWNRIGHT,numberOfAttemps+1,world,individual);
 
     case UPRIGHT:
         /*
@@ -645,7 +650,7 @@ void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World wor
             setCoordinates(individual,individual->movement.v+individual->point.x,individual->movement.v+individual->point.y);
             return;
         }
-        return checkIfPossibleOtherwiseChange(DOWNLEFT,numberOfAttemps++,world,individual);
+        return checkIfPossibleOtherwiseChange(DOWNLEFT,numberOfAttemps+1,world,individual);
     
     case DOWNLEFT:
         /*
@@ -657,7 +662,7 @@ void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World wor
             setCoordinates(individual,individual->point.x-individual->movement.v,individual->point.y-individual->movement.v);
             return;
         }
-        return checkIfPossibleOtherwiseChange(UPRIGHT,numberOfAttemps++,world,individual);
+        return checkIfPossibleOtherwiseChange(UPRIGHT,numberOfAttemps+1,world,individual);
 
     case DOWNRIGHT:
         /*
@@ -669,7 +674,8 @@ void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World wor
             setCoordinates(individual,individual->movement.v+individual->point.x,individual->point.y-individual->movement.v);
             return;
         }
-        return checkIfPossibleOtherwiseChange(UPLEFT,numberOfAttemps++,world,individual);
+          printf("reset?2");
+        return checkIfPossibleOtherwiseChange(UPLEFT,numberOfAttemps+1,world,individual);
 
 
     default:individual->movement.direction=STOP;
