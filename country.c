@@ -77,17 +77,20 @@ else
  * @param individuals list of individuals
  * @param individual individual node that needs to be added to the individuals list 
  */
-void addIndividualNode(struct IndividualNode *individuals,struct IndividualNode *individual){
+void addIndividualNode(struct Country *newCountry,struct IndividualNode *individual){
 
 if(individual==NULL){
     printf("Invalid IndividualNode");
     return;
 }
-   
-    struct IndividualNode *temp=individuals;
-    individuals=&individual;
-    individuals->next=temp;
-   
+
+struct Country *old;
+old=newCountry->individuals;
+newCountry->individuals=individual;
+individual->next=old;
+
+
+
 }
 
 /**
@@ -96,61 +99,17 @@ if(individual==NULL){
  * @param individual individual that needs to removed from the individuals list 
  */
 
-void removeIndividual(struct IndividualNode *individuals,struct Individual *individual){
-printf("--inizio eliminazione di %d da %d\n",individual->key,individual->country->name);
-     
-     struct IndividualNode *del;
-     struct Individual *delIndividual;
-     struct IndividualNode *hop;
-
-    if(individuals==NULL||individuals->individual==NULL)
-        return;
-  
-    if(individuals->individual->key==individual->key)
-        {
-            if (individuals->next!=NULL){
+struct IndividualNode* removeIndividual(struct Country *country,struct Individual *individual){
+    struct IndividualNode *individualNode;
         
-                delIndividual=individuals->individual;
-                hop=individuals->next;
-                individuals->individual=hop->individual;
-                individuals->next=hop->next;
-                printf("---%d è stato eliminato  caso:1\n",individual->key);
-                free(delIndividual);
-                return ;
-            }
-            else{
-               
-               printf("---%d è stato eliminato  caso:2\n",individual->key);  
-                individuals->individual=NULL;
-              return;
-              
-            }
-
-        } 
-
-else if(individuals->next == NULL||individuals->next->individual==NULL) 
-      return;
-
-
-   struct IndividualNode *temp=individuals; 
-   struct IndividualNode *prev; 
-   
-
-    while (temp->individual->key!= individual->key&&temp!=NULL&&temp->individual!=NULL) {
-        prev=temp;
-      temp = temp->next;
-    }
-
-    //If the position is more than the number of nodes, throw exception:
-    if (temp == NULL ||temp->individual==NULL|| temp->next == NULL) {
-      return;
-    }
-
-    //Unlink the node from the linked list
-    struct IndividualNode *next = temp->next;
-    //free(temp);
-    prev->next = next;
-    printf("---%d è stato eliminato  caso:3\n",individual->key);
+        if(country->individuals->individual->key==individual->key){
+            individualNode=country->individuals;
+            country->individuals=(country->individuals)->next;    
+            return individualNode;
+        }
+       
+     
+  
 
   }
      
@@ -190,8 +149,8 @@ void countryStatistics(struct Country country){
     struct IndividualNode *individuals=country.individuals;
     if(individuals==NULL||individuals->individual==NULL)
         return;
-
-
+    printf("\n---------------------------------------------------------STAMPO PAESE # %d",country.name);
+    printIndividuals(individuals);
 
     while (individuals!=NULL&&individuals->individual!=NULL)
     {

@@ -7,12 +7,8 @@
 /*
     WARNINGS   
 
-    1) PROBLEMA: richiesta se passare al giorno successivo compare solo dopo che si ha mandato una risposta!
-
-    2) la remove a volte provoca un seg fault
-        ---> caso 1 della remove da rifare --> 
-    
-    
+    1) PROBLEMA: una volta usciti dal metodo per l'update del country la lista individui non mantiene le modifiche 
+        sulla rimozione.
 */
                           
 
@@ -265,7 +261,8 @@ struct IndividualNode *individuals2;
 
         }
         
-        MPI_Barrier(MPI_COMM_WORLD);
+        MPI_Barrier(MPI_COMM_WORLD);            
+
         elapsedSeconds+=time;
         step++;
       }
@@ -283,10 +280,12 @@ struct IndividualNode *individuals2;
         if(answer!=1)
         {
 
+
             if (my_rank == 0)
             {
-                for(int i=0;i<numOfCountries;i++)
-                    countryStatistics(getCountries(world)[i]);
+                for(int i=0;i<numOfCountries;i++){
+                    
+                    countryStatistics(getCountries(world)[i]);}
             }
 
             exit = 1;
@@ -476,7 +475,7 @@ int healthyOrSick(int healthyToAssign,int sickToAssign){
     return randomnumber;
 }
 
-int getAmountPerCountry(restOfPeople){
+int getAmountPerCountry(int restOfPeople){
     
     int randomnumber = rand() % restOfPeople;
     return randomnumber;
@@ -550,9 +549,10 @@ void checkIfCountryHasBeenChanged(struct Individual *individual,struct World wor
                  printf("\n l'individuo %d ha richiesto l'update dello stato allo stato %d\n",individual->key,countries[i].name);
                 //then we've found the right country
                 
-                updateCountry(individual,&countries[i]);
-                
-                
+                updateCountry(individual,&countries[i],individual->country);
+                printf("------------------- COUNTRY %d -------------------",countries[i].name);
+                printIndividuals(countries[i].individuals);
+                printf("------------------- END COUNTRY  -------------------");
                return;
 
         
