@@ -167,9 +167,11 @@ void updateCountry(struct Individual *individual, struct Country *newCountry, st
       
        
         printf("\nfirst individual leaves the country\n");
+
+        individualNode=oldCountry->individuals;
         
         //remove the individualNode from the old country list
-        individualNode=removeIndividual(oldCountry,individual);
+        oldCountry->individuals=individualNode->next;
 
         //Add the individualNode in the list inside the new country
         addIndividualNode(newCountry,individualNode);
