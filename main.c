@@ -8,9 +8,7 @@
     WARNINGS   
 
     1) PROBLEMA: una volta usciti dal metodo per l'update del country la lista individui non mantiene le modifiche 
-        sulla rimozione.
-
-    2) da controllare: alla fine dell'esecuzione sono sempre tutti infetti    
+        sulla rimozione. 
 */
                           
 
