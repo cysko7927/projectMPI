@@ -155,8 +155,7 @@ void updateCountry(struct Individual *individual, struct Country *newCountry, st
 
     
 
-    //change the country inside the individual struct
-    individual->country=newCountry;
+    
 
     //if the oldCountry has no individual -> go back
     if(oldCountry->individuals==NULL||oldCountry->individuals->individual==NULL)
@@ -177,18 +176,20 @@ void updateCountry(struct Individual *individual, struct Country *newCountry, st
         addIndividualNode(newCountry,individualNode);
 
         printf("\nend update of the country\n");
+
+         //individualNode->individual->country=newCountry;  da segFault
         return;
     }
 
     cur=oldCountry->individuals;
 
     //look for the IndividualNode corrisponding to the individual
-    while(cur->next!=NULL&&cur->next->individual->key!=individual->key){
+    while(cur->next!=NULL&&cur->next->individual!=NULL&&cur->next->individual->key!=individual->key){
             cur=cur->next;
     }
     
     //if not found
-    if(cur->next==NULL)
+    if(cur->next==NULL||cur->next->individual==NULL)
         return;
 
     //corresponding IndividualNode
@@ -199,6 +200,8 @@ void updateCountry(struct Individual *individual, struct Country *newCountry, st
 
     //Add the individual in the list inside the new country
     addIndividualNode(newCountry,individualNode); 
+
+    //individualNode->individual->country=newCountry;  da segFault
 
     //the old country has lost the reference
     individualNode=NULL;

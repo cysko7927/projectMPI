@@ -519,12 +519,8 @@ if(dir!=STOP)
     checkIfPossibleOtherwiseChange(dir,0,world,individual);
 if(dir!=STOP)
     checkIfCountryHasBeenChanged(individual,world);   
-printIndividual(individual);
 if(dir==STOP)
-    {printf("\nThe individual does not move in this turn\n");
-    }
-
-
+    {printf("\nThe individual does not move in this turn\n");}
 }
 
 
@@ -550,9 +546,6 @@ void checkIfCountryHasBeenChanged(struct Individual *individual,struct World wor
                 //then we've found the right country
                 
                 updateCountry(individual,&countries[i],(individual->country));
-                printf("------------------- COUNTRY %d -------------------",countries[i].name);
-                printIndividuals(countries[i].individuals);
-                printf("------------------- END COUNTRY  -------------------");
                return;
 
         
