@@ -144,8 +144,9 @@ void updateCountry(struct Individual *individual, struct Country *newCountry, st
     printf("\nDA country : %d\n",oldCountry->name);
     printf("\nA:\n country : %d\n",newCountry->name);
 
+    individual->country=newCountry;
    
-    
+   
     struct IndividualNode *individualNode;
     struct IndividualNode *head;
     struct IndividualNode *cur;
@@ -176,11 +177,10 @@ void updateCountry(struct Individual *individual, struct Country *newCountry, st
         addIndividualNode(newCountry,individualNode);
 
         printf("\nend update of the country\n");
-
-         //individualNode->individual->country=newCountry;  da segFault
+        
         return;
     }
-
+/* 
     cur=oldCountry->individuals;
 
     //look for the IndividualNode corrisponding to the individual
@@ -206,7 +206,7 @@ void updateCountry(struct Individual *individual, struct Country *newCountry, st
     //the old country has lost the reference
     individualNode=NULL;
 
-    printf("fine cambio stato");
+    printf("fine cambio stato");*/
 
 }
 void printIndividual(struct Individual *individual){

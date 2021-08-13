@@ -139,17 +139,17 @@ void printIndividuals(struct IndividualNode *individuals){
  * @param country the country that has the info that the program is going to print at end-day statistics
  */
 
-void countryStatistics(struct Country country){
+void countryStatistics(struct Country *country){
 
     int healthyCount=0;
     int suceptibleCount=0;
     int immuneCount=0;
     int infectedCount=0;
 
-    struct IndividualNode *individuals=country.individuals;
+    struct IndividualNode *individuals=country->individuals;
     if(individuals==NULL||individuals->individual==NULL)
         return;
-    printf("\n---------------------------------------------------------STAMPO PAESE # %d",country.name);
+    printf("\n---------------------------------------------------------STAMPO PAESE # %d",country->name);
     printIndividuals(individuals);
 
     while (individuals!=NULL&&individuals->individual!=NULL)
@@ -172,6 +172,6 @@ void countryStatistics(struct Country country){
     }
 
     printf("\n---------COUNTRY #%d ----------------\n\nhealthy individuals: %d\ninfected individuals: %d\nsusceptible individuals: %d\nimmune individuals: %d\n-------------------------------------\n"
-        ,country.name,healthyCount,infectedCount,suceptibleCount,immuneCount);
+        ,country->name,healthyCount,infectedCount,suceptibleCount,immuneCount);
     
 }

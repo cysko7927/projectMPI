@@ -37,6 +37,6 @@ void addIndividualNode(struct Country *newCountry,struct IndividualNode *individ
 struct IndividualNode * removeIndividual(struct Country *country,struct Individual *individual);
 
 void printIndividuals(struct IndividualNode *individuals);
-void countryStatistics(struct Country country);
+void countryStatistics(struct Country *country);
 
 #endif
