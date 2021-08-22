@@ -138,12 +138,15 @@ void setCoordinates(struct Individual *individual, int x,int y)
  * @param individual individual to move in an other country
  * @param newCountry country where the individual is moved
  */
-void updateCountry(struct Individual *individual, struct Country *newCountry, struct Country *oldCountry)
+void updateCountry(struct Individual *individual, struct Country *newCountry, struct Country *oldaCountry)
 {
+      struct Country *oldCountry;
+     oldCountry=individual->country;
    
     printf("\nl'individuo con id: %d cambia country",individual->key);
     printf("\nDA country : %d\n",oldCountry->name);
     printf("\nA:\n country : %d\n",newCountry->name);
+  
 
     individual->country=newCountry;
    
@@ -155,7 +158,7 @@ void updateCountry(struct Individual *individual, struct Country *newCountry, st
     struct IndividualNode *source;
     struct IndividualNode *dest;
 
-    
+     
     
 
     
@@ -172,12 +175,11 @@ void updateCountry(struct Individual *individual, struct Country *newCountry, st
 
         cur=oldCountry->individuals;
 
-        oldCountry->individuals=oldCountry->individuals->next;
+        oldCountry->individuals=cur->next;
 
         //Add the individualNode in the list inside the new country
         addIndividualNode(newCountry,cur);
         
-
         printf("\nend update of the country\n");
         
         return;

@@ -414,7 +414,7 @@ void addIndividuals(struct World*world, int numOfIndividuals, int numOfInfectedI
 
                addIndividual(world->countries[i].individuals,individual);
                struct  Country *punCountry=malloc(sizeof(struct Country));
-                *punCountry=world->countries[i];
+                punCountry=&world->countries[i];
                 individual->country=punCountry;
                 individual->movement=setInitialMovement(speed);
 
