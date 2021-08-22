@@ -284,7 +284,7 @@ struct IndividualNode *individuals2;
             if (my_rank == 0)
             {
                 for(int i=0;i<numOfCountries;i++){
-                    countryStatistics(getCountries[i]);
+                    countryStatistics(&getCountries(world)[i]);
                     }
             }
 
@@ -528,8 +528,6 @@ if(dir==STOP)
 //nb if the individual is on the line between two countries it doesn't change its country value
 // until it doesn't surpass the line
 void checkIfCountryHasBeenChanged(struct Individual *individual,struct World world)  {
-              
-
     struct Country *country=individual->country;
     if(individual->point.x>country->w.x||individual->point.x<country->x.x||individual->point.y>country->y.y||individual->point.y<country->x.y)
     {

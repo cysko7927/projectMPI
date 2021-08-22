@@ -86,8 +86,9 @@ if(individual==NULL){
 
 struct IndividualNode *old;
 old=newCountry->individuals;
-newCountry->individuals=individual;
 individual->next=old;
+newCountry->individuals=individual;
+
 
 
 

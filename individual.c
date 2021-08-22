@@ -140,6 +140,7 @@ void setCoordinates(struct Individual *individual, int x,int y)
  */
 void updateCountry(struct Individual *individual, struct Country *newCountry, struct Country *oldCountry)
 {
+   
     printf("\nl'individuo con id: %d cambia country",individual->key);
     printf("\nDA country : %d\n",oldCountry->name);
     printf("\nA:\n country : %d\n",newCountry->name);
@@ -155,32 +156,33 @@ void updateCountry(struct Individual *individual, struct Country *newCountry, st
     struct IndividualNode *dest;
 
     
+    
 
     
 
     //if the oldCountry has no individual -> go back
     if(oldCountry->individuals==NULL||oldCountry->individuals->individual==NULL)
         return;
-
+  
     //the first individual of the country change country
    if(oldCountry->individuals->individual->key==individual->key){
-      
+    
        
         printf("\nfirst individual leaves the country\n");
 
-        individualNode=oldCountry->individuals;
-        
-        //remove the individualNode from the old country list
-        oldCountry->individuals=individualNode->next;
+        cur=oldCountry->individuals;
+
+        oldCountry->individuals=oldCountry->individuals->next;
 
         //Add the individualNode in the list inside the new country
-        addIndividualNode(newCountry,individualNode);
+        addIndividualNode(newCountry,cur);
+        
 
         printf("\nend update of the country\n");
         
         return;
     }
-/* 
+
     cur=oldCountry->individuals;
 
     //look for the IndividualNode corrisponding to the individual
@@ -194,19 +196,16 @@ void updateCountry(struct Individual *individual, struct Country *newCountry, st
 
     //corresponding IndividualNode
     individualNode=cur->next;
-    prec=cur;
-    //now the individualNode can't be reached
-    prec->next=individualNode->next;
+    cur->next=individualNode->next;
 
     //Add the individual in the list inside the new country
     addIndividualNode(newCountry,individualNode); 
 
-    //individualNode->individual->country=newCountry;  da segFault
 
-    //the old country has lost the reference
-    individualNode=NULL;
 
-    printf("fine cambio stato");*/
+   
+
+    printf("fine cambio stato");
 
 }
 void printIndividual(struct Individual *individual){
