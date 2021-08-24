@@ -4,7 +4,7 @@
 #include "individual.h"
 
 /**
- * @brief Create a country on the map 
+ * @brief Create a country 
  * @param x @param y @param z @param w vertix of the country
  * @param name name assigned to the contry in order to be identificable
  * @param country the country pointer that it's used in order to build the Country
@@ -28,7 +28,7 @@ void addCountry(struct Point x,struct Point y,struct Point z,struct Point w,int 
 
 /**
  * @brief Add a new individual to an individuals list, if the list doesn't exists then it builds one   
- * @param individuals list of individuals
+ * @param individuals list of individuals inside the list
  * @param individual individual that needs to be added to the individuals list 
  */
 void addIndividual(struct IndividualNode *individuals,struct Individual *individual){
@@ -73,8 +73,9 @@ else
   
 }
 /**
- * @brief Add an existing individual to the country individuals list, if the list doesn't exists then it builds one   
- * @param individuals list of individuals
+ * @brief Add an existing individual node to the country individuals list in the 1st position, if the list doesn't exists then it builds one.
+ *          this method is called by the updateCountry (see individual.c) 
+ * @param newCountry country in which the individual node has to be inserted
  * @param individual individual node that needs to be added to the individuals list 
  */
 void addIndividualNode(struct Country *newCountry,struct IndividualNode *individual){
@@ -89,31 +90,7 @@ old=newCountry->individuals;
 individual->next=old;
 newCountry->individuals=individual;
 
-
-
-
 }
-
-/**
- * @brief remove an individual from an individuals list
- * @param individuals list of individuals
- * @param individual individual that needs to removed from the individuals list 
- */
-
-struct IndividualNode* removeIndividual(struct Country *country,struct Individual *individual){
-    struct IndividualNode *individualNode;
-        
-        if(country->individuals->individual->key==individual->key){
-            individualNode=country->individuals;
-            country->individuals=(country->individuals)->next;    
-            return individualNode;
-        }
-       
-     
-  
-
-  }
-     
 
 
 
@@ -150,9 +127,7 @@ void countryStatistics(struct Country *country){
     struct IndividualNode *individuals=country->individuals;
     if(individuals==NULL||individuals->individual==NULL)
         return;
-    printf("\n---------------------------------------------------------STAMPO PAESE # %d",country->name);
-    printIndividuals(individuals);
-
+        
     while (individuals!=NULL&&individuals->individual!=NULL)
     {
         switch (individuals->individual->state)

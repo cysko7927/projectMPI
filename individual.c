@@ -135,17 +135,19 @@ void setCoordinates(struct Individual *individual, int x,int y)
  * Remove the individual from his country and move him in a new country
  * updating the data structure inside the individual and the structs of the countries
  * 
- * @param individual individual to move in an other country
- * @param newCountry country where the individual is moved
+ * @param individual individual that moves in an other country
+ * @param newCountry country in which the individual is moved
  */
 void updateCountry(struct Individual *individual, struct Country *newCountry, struct Country *oldaCountry)
 {
       struct Country *oldCountry;
      oldCountry=individual->country;
    
-    printf("\nl'individuo con id: %d cambia country",individual->key);
-    printf("\nDA country : %d\n",oldCountry->name);
-    printf("\nA:\n country : %d\n",newCountry->name);
+    printf("\n================================================\n");
+    printf("\nIndividual: %d changes country",individual->key);
+    printf("\nfrom country : %d",oldCountry->name);
+    printf("\nto:\n country : %d",newCountry->name);
+    printf("\n================================================\n");
   
 
     individual->country=newCountry;
@@ -159,9 +161,6 @@ void updateCountry(struct Individual *individual, struct Country *newCountry, st
     struct IndividualNode *dest;
 
      
-    
-
-    
 
     //if the oldCountry has no individual -> go back
     if(oldCountry->individuals==NULL||oldCountry->individuals->individual==NULL)
@@ -169,9 +168,6 @@ void updateCountry(struct Individual *individual, struct Country *newCountry, st
   
     //the first individual of the country change country
    if(oldCountry->individuals->individual->key==individual->key){
-    
-       
-        printf("\nfirst individual leaves the country\n");
 
         cur=oldCountry->individuals;
 
@@ -179,8 +175,6 @@ void updateCountry(struct Individual *individual, struct Country *newCountry, st
 
         //Add the individualNode in the list inside the new country
         addIndividualNode(newCountry,cur);
-        
-        printf("\nend update of the country\n");
         
         return;
     }
@@ -204,19 +198,32 @@ void updateCountry(struct Individual *individual, struct Country *newCountry, st
     addIndividualNode(newCountry,individualNode); 
 
 
-
-   
-
-    printf("fine cambio stato");
-
 }
+
+
+
 void printIndividual(struct Individual *individual){
+    char status[20];
+       
+           if(individual->state==infected)
+            strcpy(status,"infected");
+           else if(individual->state==healthy) 
+            strcpy(status,"healthy");
+           else if(individual->state==immune) 
+            strcpy(status,"immune");
+           else if(individual->state==infectionsInProgress) 
+            strcpy(status,"infectionsInProgress");
+           else strcpy(status,"error");
+           
+       
+
    
-       printf("\nstampa singola\nstate: %d\nx: %d\ny: %d\n#: %d\n id: %d\n",(int) individual->state,
-       individual->point.x,
-       individual->point.y,
-       individual->country->name,
-       individual->key);
+       printf("\n================================================\n"); 
+       printf("\nINDIVIDUAL INFO");
+       printf("\nID: %d\ncountry: %d\n(x,y)=(%d,%d)\nstatus:%s\nspeed:%d",individual->key,individual->country->name,individual->point.x,individual->point.y,status,individual->movement.v);
+       printf("\n================================================\n"); 
+       
+       
     
   
 

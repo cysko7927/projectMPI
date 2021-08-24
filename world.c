@@ -7,6 +7,8 @@
  * @brief Create the map of the world
  * @param x,y,z,w vertix of the map
  * @param countries contains all the countries that have to be added to the world
+ * @param numOfCountries number of the countries that will be added to the world
+ * @param world pointer to the world
  * @return map
  */
 void createWorld(struct Point x,struct Point y,struct Point z,
@@ -33,14 +35,15 @@ struct Country *getCountries(struct World world){
 void printWorld(struct World world){
     
    printf(
-       "\n world coordinates : x=( %d,%d)  y=(%d,%d) w=(%d,%d) z=(%d,%d)",
+       "\n world coordinates : x=( %d,%d)  y=(%d,%d) w=(%d,%d) z=(%d,%d)\n",
             world.x.x,world.x.y,world.y.x,world.y.y,world.w.x,world.w.y,world.z.x,world.z.y
    );
     
 }
 
 void printCountries(struct World world){
-
+printf("\n========================================================================================\n");
+printf("\nCOUNTRIES & BOUNDARIES\n");
     for(int i=0; i<world.numOfCountries;i++){
        printf(
        "\n country #%d coordinates : x=( %d,%d)  y=(%d,%d) w=(%d,%d) z=(%d,%d)\n",getCountries(world)[i].name,
@@ -49,15 +52,10 @@ void printCountries(struct World world){
             getCountries(world)[i].w.y,getCountries(world)[i].z.x,getCountries(world)[i].z.y
    );
     }
+printf("\n========================================================================================\n");    
 }
 
-void statistics(struct World world){
-    int maxi=world.numOfCountries;
-    for(int i=0;i<maxi;i++){
 
-       // countryStatistics(world.countries[i]);
-    }
-}
 
 
 

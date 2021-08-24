@@ -30,12 +30,8 @@ struct Country
 
 
 void addCountry(struct Point x,struct Point y,struct Point z,struct Point w,int name,struct Country *country);
-
 void addIndividual(struct IndividualNode *individuals,struct Individual *individual);
 void addIndividualNode(struct Country *newCountry,struct IndividualNode *individual);
-
-struct IndividualNode * removeIndividual(struct Country *country,struct Individual *individual);
-
 void printIndividuals(struct IndividualNode *individuals);
 void countryStatistics(struct Country *country);
 

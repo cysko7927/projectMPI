@@ -4,12 +4,7 @@
 #include "world.h"
 #include "country.h"
 #include "DistanceCalculation.h"
-/*
-    WARNINGS   
 
-    1) PROBLEMA: una volta usciti dal metodo per l'update del country la lista individui non mantiene le modifiche 
-        sulla rimozione. 
-*/
                           
 
 
@@ -156,22 +151,7 @@ int main(int argc, char const *argv[])
 
   }
 
-  struct IndividualNode *individuals; 
-
-  for(int i=0;i<numOfCountries;i++){
-      individuals=world.countries[i].individuals;
-      //for each individual of each contry do the movement and then print the individual and the directions
-      while(individuals!=NULL&&individuals->individual!=NULL) {
-       if(individuals->individual->hasAlreadyMoved==0){
-         doMovement(individuals->individual,world,time);
-     //     if (my_rank == 0){printIndividual(individuals->individual);}
-     //     if (my_rank == 0){printDirection(individuals->individual->movement.direction);}
-    }
-        individuals=individuals->next;
-     }
-     
-  }
-
+struct IndividualNode *individuals; 
 
  int elapsedSeconds=0;
  
@@ -182,31 +162,20 @@ int main(int argc, char const *argv[])
  MPI_Barrier(MPI_COMM_WORLD);
  int j = 0;
 
-struct IndividualNode *individuals2; 
+//save all the individuals into an array
 
-
-    //
-        //save all the individuals into a list
-
-
-       
- 
-    printf("Inizio creazione array individui\n");
     for(int i=0;i<numOfCountries;i++){
-        individuals2=world.countries[i].individuals;
-        while(individuals2!=NULL&&individuals2->individual!=NULL)
+        individuals=world.countries[i].individuals;
+        while(individuals!=NULL&&individuals->individual!=NULL)
         {
-            printIndividual(individuals2->individual);
-            allIndividuals[j] = individuals2->individual;
+            printIndividual(individuals->individual);
+            allIndividuals[j] = individuals->individual;
             j++;
-            individuals2=individuals2->next;
+            individuals=individuals->next;
         }
     }
 
-    printf("Fine creazione array individui\n");
-
-
-
+   
 
 
     //-------------------each process manages part of all the individuals
@@ -226,8 +195,12 @@ struct IndividualNode *individuals2;
 
      while (elapsedSeconds<secondsInADay)
       {
-        if(my_rank == 0){printf("Step in a day: %d / %d\n",step,stepTotal);}
+        if(my_rank == 0){
+            printf("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~NEW STEP~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+            printf("\nStep in a day: %d / %d\n",step,stepTotal);}
       
+            
+       
 
         for(int i=0;i<numOfIndividuals;i++){
             allIndividuals[i]->hasAlreadyMoved=0;
@@ -236,9 +209,10 @@ struct IndividualNode *individuals2;
 
          for(int i=0;i<numOfIndividuals;i++){
  //the two  cycles can't be unified otherwise when an individual changes country it could move another time in the same turn
-          if( allIndividuals[i]->hasAlreadyMoved==0)
+          if( allIndividuals[i]->hasAlreadyMoved==0){
                doMovement( allIndividuals[i],world,time);
-                
+               printIndividual(allIndividuals[i]);
+          }               
          
     }
 
@@ -269,7 +243,7 @@ struct IndividualNode *individuals2;
       MPI_Barrier(MPI_COMM_WORLD);
         if (my_rank == 0)
         {
-            printf("Do you wish to emulate another day? if so digit 1 ");
+            printf("\nDo you wish to emulate another day? if so digit 1\n ");
             scanf("%d",&answer);
         }
 
@@ -284,8 +258,10 @@ struct IndividualNode *individuals2;
             if (my_rank == 0)
             {
                 for(int i=0;i<numOfCountries;i++){
-                    countryStatistics(&getCountries(world)[i]);
+                    countryStatistics(&getCountries(world)[i]);    
                     }
+
+               
             }
 
             exit = 1;
@@ -380,7 +356,7 @@ void addIndividuals(struct World*world, int numOfIndividuals, int numOfInfectedI
             amountPerCountry=getAmountPerCountry(restOfPeople);
         else
             amountPerCountry=restOfPeople;
-        printf("amount #%d : %d\n",i,amountPerCountry);
+        printf("\nCountry #%d has %d individual/s\n",i,amountPerCountry);
         //in order to place individuals inside the designated country
         while(amountPerCountry>0){
 
@@ -481,11 +457,12 @@ int getAmountPerCountry(int restOfPeople){
     return randomnumber;
 }
 
-
+//time= duration of the step
 void doMovement(struct Individual *individual,struct World world,int time){
- printf("\n -- movimento effettuato da:  %d     \n",individual->key);   
  
- individual->hasAlreadyMoved=1;
+ printf("\nThe individual #%d asks to move \n",individual->key);   
+ 
+ individual->hasAlreadyMoved=1;//the individual has to wait the next turn in order to move
 
  Direction dir;
   //UP,DOWN,LEFT,RIGHT,UPLEFT,UPRIGHT,DOWNLEFT,DOWNRIGHT,STOP
@@ -515,12 +492,18 @@ void doMovement(struct Individual *individual,struct World world,int time){
      break;
  }
 
+  printf("The individual wants:\n ");
+  printDirection(dir);   
+  printf("\nChecking if the direction (or the opposite if the 1st cannot be chosen) is possible");
+
 if(dir!=STOP)
-    checkIfPossibleOtherwiseChange(dir,0,world,individual);
+    checkIfPossibleOtherwiseChange(dir,0,world,individual,time);
 if(dir!=STOP)
     checkIfCountryHasBeenChanged(individual,world);   
 if(dir==STOP)
     {printf("\nThe individual does not move in this turn\n");}
+
+     
 }
 
 
@@ -531,7 +514,6 @@ void checkIfCountryHasBeenChanged(struct Individual *individual,struct World wor
     struct Country *country=individual->country;
     if(individual->point.x>country->w.x||individual->point.x<country->x.x||individual->point.y>country->y.y||individual->point.y<country->x.y)
     {
-         printf("\n l'individuo %d ha cambiato stato\n",individual->key);
         //then the country must be changed
         struct Country *countries=getCountries(world);
         int i=0;
@@ -540,7 +522,7 @@ void checkIfCountryHasBeenChanged(struct Individual *individual,struct World wor
            //when the choice about the new country happens on the line between the two -> pick the first one in the array of countries
          if(countries[i].x.x<=individual->point.x&&countries[i].w.x>=individual->point.x&&countries[i].x.y<=individual->point.y&&countries[i].y.y>=individual->point.y)
             {
-                 printf("\n l'individuo %d ha richiesto l'update dello stato allo stato %d\n",individual->key,countries[i].name);
+        
                 //then we've found the right country
                 
                updateCountry(individual,&countries[i],individual->country);
@@ -555,9 +537,9 @@ void checkIfCountryHasBeenChanged(struct Individual *individual,struct World wor
     }
 }
 //if the direction is possible then change the indidiual's coordinates
-void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World world,struct Individual *individual){
+void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World world,struct Individual *individual,int time){
        //UP,DOWN,LEFT,RIGHT,UPLEFT,UPRIGHT,DOWNLEFT,DOWNRIGHT,
-       printf("\ncontrollo direzione di:  %d\n",individual->key);
+      
     int numberOfAttemps=attempts;
 
     if(numberOfAttemps<2){
@@ -569,105 +551,121 @@ void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World wor
         the individual moves along its y coordinate by increasing it 
             -> check if the movement can push the individual out the upper border of the world
         */
-       if(individual->movement.v+individual->point.y<=world.y.y) //if so the movement is possible
+       if(individual->movement.v*time+individual->point.y<=world.y.y) //if so the movement is possible
         {
             individual->movement.direction=dir;
-            setCoordinates(individual,individual->point.x,individual->point.y+individual->movement.v);
+            setCoordinates(individual,individual->point.x,individual->point.y+individual->movement.v*time);
+            printf("\nAssigned");
+            printDirection(individual->movement.direction);
             return;
         }
          
-       return checkIfPossibleOtherwiseChange(DOWN,numberOfAttemps+1,world,individual);     
+       return checkIfPossibleOtherwiseChange(DOWN,numberOfAttemps+1,world,individual,time);     
             
     case DOWN:
         /*
         the individual moves along its y coordinate by decreasing it 
             -> check if the movement can push the individual out the lower border of the world
         */
-        if(individual->point.y-individual->movement.v>=world.x.y) //if so the movement is possible
+        if(individual->point.y-individual->movement.v*time>=world.x.y) //if so the movement is possible
            {
             individual->movement.direction=dir;
-            setCoordinates(individual,individual->point.x,individual->point.y-individual->movement.v);
+            setCoordinates(individual,individual->point.x,individual->point.y-individual->movement.v*time);
+            printf("\nAssigned");
+            printDirection(individual->movement.direction);
             return;
         }
       
-       return checkIfPossibleOtherwiseChange(UP,numberOfAttemps+1,world,individual);    
+       return checkIfPossibleOtherwiseChange(UP,numberOfAttemps+1,world,individual,time);    
 
     case LEFT:
         /*
         the individual moves along its x coordinate by decreasing it 
             -> check if the movement can push the individual out the left border of the world
         */
-       if(individual->point.x-individual->movement.v>=world.x.x) //if so the movement is possible
+       if(individual->point.x-individual->movement.v*time>=world.x.x) //if so the movement is possible
            {
             individual->movement.direction=dir;
-            setCoordinates(individual,individual->point.x-individual->movement.v,individual->point.y);
+            setCoordinates(individual,individual->point.x-individual->movement.v*time,individual->point.y);
+            printf("\nAssigned");
+            printDirection(individual->movement.direction);
             return;
         }
-       return checkIfPossibleOtherwiseChange(RIGHT,numberOfAttemps+1,world,individual);     
+       return checkIfPossibleOtherwiseChange(RIGHT,numberOfAttemps+1,world,individual,time);     
 
     case RIGHT:
         /*
         the individual moves along its x coordinate by increasing it 
             -> check if the movement can push the individual out the right border of the world
         */
-       if(individual->movement.v+individual->point.x<=world.w.x) //if so the movement is possible
+       if(individual->movement.v*time+individual->point.x<=world.w.x) //if so the movement is possible
             {
             individual->movement.direction=dir;
-            setCoordinates(individual,individual->movement.v+individual->point.x,individual->point.y);
+            setCoordinates(individual,individual->movement.v*time+individual->point.x,individual->point.y);
+            printf("\nAssigned");
+            printDirection(individual->movement.direction);
             return;
         }
-       return checkIfPossibleOtherwiseChange(DOWN,numberOfAttemps+1,world,individual);     
+       return checkIfPossibleOtherwiseChange(DOWN,numberOfAttemps+1,world,individual,time);     
 
     case UPLEFT:
         /*
         individual x -> decreased   individual y -> increased
         */
-       if(individual->point.x-individual->movement.v>=world.x.x&&individual->movement.v+individual->point.y<=world.y.y)
+       if(individual->point.x-individual->movement.v*time>=world.x.x&&individual->movement.v*time+individual->point.y<=world.y.y)
             {
             individual->movement.direction=dir;
-            setCoordinates(individual,individual->point.x-individual->movement.v,individual->movement.v+individual->point.y);
+            setCoordinates(individual,individual->point.x-individual->movement.v*time,individual->movement.v*time+individual->point.y);
+            printf("\nAssigned");
+            printDirection(individual->movement.direction);
             return;
         }
-                  printf("reset?");
+                 
 
-       return checkIfPossibleOtherwiseChange(DOWNRIGHT,numberOfAttemps+1,world,individual);
+       return checkIfPossibleOtherwiseChange(DOWNRIGHT,numberOfAttemps+1,world,individual,time);
 
     case UPRIGHT:
         /*
         individual x -> increased   individual y -> increased
         */
-        if(individual->movement.v+individual->point.x<=world.w.x&&individual->movement.v+individual->point.y<=world.y.y)
+        if(individual->movement.v*time+individual->point.x<=world.w.x&&individual->movement.v*time+individual->point.y<=world.y.y)
             {
             individual->movement.direction=dir;
-            setCoordinates(individual,individual->movement.v+individual->point.x,individual->movement.v+individual->point.y);
+            setCoordinates(individual,individual->movement.v*time+individual->point.x,individual->movement.v*time+individual->point.y);
+            printf("\nAssigned");
+            printDirection(individual->movement.direction);
             return;
         }
-        return checkIfPossibleOtherwiseChange(DOWNLEFT,numberOfAttemps+1,world,individual);
+        return checkIfPossibleOtherwiseChange(DOWNLEFT,numberOfAttemps+1,world,individual,time);
     
     case DOWNLEFT:
         /*
         individual x -> decreased   individual y -> decreased
         */
-        if(individual->point.x-individual->movement.v>=world.x.x&&individual->point.y-individual->movement.v>=world.x.y)
+        if(individual->point.x-individual->movement.v*time>=world.x.x&&individual->point.y-individual->movement.v*time>=world.x.y)
              {
             individual->movement.direction=dir;
-            setCoordinates(individual,individual->point.x-individual->movement.v,individual->point.y-individual->movement.v);
+            setCoordinates(individual,individual->point.x-individual->movement.v*time,individual->point.y-individual->movement.v*time);
+            printf("\nAssigned");
+            printDirection(individual->movement.direction);
             return;
         }
-        return checkIfPossibleOtherwiseChange(UPRIGHT,numberOfAttemps+1,world,individual);
+        return checkIfPossibleOtherwiseChange(UPRIGHT,numberOfAttemps+1,world,individual,time);
 
     case DOWNRIGHT:
         /*
         individual x -> increased   individual y -> decreased
         */
-        if(individual->movement.v+individual->point.x<=world.w.x&&individual->point.y-individual->movement.v>=world.x.y)
+        if(individual->movement.v*time+individual->point.x<=world.w.x&&individual->point.y-individual->movement.v*time>=world.x.y)
             {
             individual->movement.direction=dir;
-            setCoordinates(individual,individual->movement.v+individual->point.x,individual->point.y-individual->movement.v);
+            setCoordinates(individual,individual->movement.v*time+individual->point.x,individual->point.y-individual->movement.v*time);
+            printf("\nAssigned");
+            printDirection(individual->movement.direction);
             return;
         }
-          printf("reset?2");
-        return checkIfPossibleOtherwiseChange(UPLEFT,numberOfAttemps+1,world,individual);
+         
+        return checkIfPossibleOtherwiseChange(UPLEFT,numberOfAttemps+1,world,individual,time);
 
 
     default:individual->movement.direction=STOP;
@@ -675,7 +673,8 @@ void  checkIfPossibleOtherwiseChange(Direction dir,int attempts,struct World wor
     }
     }
 
-    else individual->movement.direction=STOP; //if both direction and the oppesed direction are not possible then the individual is stooped for the round
+    else {individual->movement.direction=STOP;
+            printf("\nthe REQUESTED movement and its OPPOSITE are not possible -> the individual is stopped");} //if both direction and the oppesed direction are not possible then the individual is stooped for the round
 
     return;
 }

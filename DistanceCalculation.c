@@ -120,12 +120,14 @@ void calculateDistance(struct Individual *allIndividual[],struct Distance allDis
     
     if (my_rank == 0)
     {   
+        printf("\n=======================================================================\n");
         printf("Calculated Distances for individual with coordinate: x=%ld y=%ld\n",xFirstPoint,yFirstPoint);
 
         for (size_t i = 0; i < nTotalIndividual -1; i++)
         {
             printf("For x=%ld,y=%ld the distance is %lf\n",allDistance[i].x,allDistance[i].y,allDistance[i].distance);
         }
+         printf("\n=======================================================================\n");
     }
 }
 

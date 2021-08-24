@@ -28,7 +28,7 @@ struct Point w,struct Country *countries,int numOfCountries,struct World *world)
 struct Country *getCountries(struct World world);
 void printWorld(struct World world);
 void printCountries(struct World world);
-void statistics(struct World world);
+
 
     
 

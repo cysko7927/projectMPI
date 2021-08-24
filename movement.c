@@ -37,16 +37,29 @@ struct Movement setInitialMovement(int speed){
 void printDirection(Direction dir){
     switch (dir)
     {
-    case STOP:printf("assigned direction: STOP");
-       return;
-    case UP: printf("assigned direction: UP");
+    case STOP:printf("\ndirection: STOP");
         return;
-    
+    case UP:printf("\ndirection: UP");
+        return;
+    case DOWN:printf("\ndirection: DOWN");
+        return;
+    case LEFT:printf("\ndirection: LEFT");
+        return;
+    case RIGHT:printf("\ndirection: RIGHT");
+        return;
+    case UPLEFT:printf("\ndirection: UPLEFT");
+        return;
+    case UPRIGHT:printf("\ndirection: UPRIGHT");
+        return;
+    case DOWNLEFT:printf("\ndirection: DOWNLEFT");
+        return;
+    case DOWNRIGHT:printf("\ndirection: DOWNRIGHT");
+        return;
     default:
         break;
     }
     
-    printf("assigned direction: %d" , (int) dir);
+    printf("\nassigned direction: %d" , (int) dir);
 }
 
 
