@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "individual.h"
 
 
@@ -203,7 +204,7 @@ void updateCountry(struct Individual *individual, struct Country *newCountry, st
 
 
 void printIndividual(struct Individual *individual){
-    char status[20];
+    char status[21];
        
            if(individual->state==infected)
             strcpy(status,"infected");
