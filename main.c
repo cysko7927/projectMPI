@@ -182,6 +182,7 @@ struct IndividualNode *individuals;
 
     int answer;
     int exit = 0;
+    int slice;
  
   //dummy method for time management //TODO
 
@@ -192,6 +193,7 @@ struct IndividualNode *individuals;
         int step = 1;
         int stepTotal = secondsInADay/time;
         elapsedSeconds=0;
+        slice=time;
 
      while (elapsedSeconds<secondsInADay)
       {
@@ -207,10 +209,16 @@ struct IndividualNode *individuals;
         //here we've to reset all the movements
         }
 
+ if(step==stepTotal){
+            //last movement of the day we cannot do slice=time we could have a rest in secondsInADay/time
+            slice=secondsInADay-elapsedSeconds;
+        }
+
+
          for(int i=0;i<numOfIndividuals;i++){
  //the two  cycles can't be unified otherwise when an individual changes country it could move another time in the same turn
           if( allIndividuals[i]->hasAlreadyMoved==0){
-               doMovement( allIndividuals[i],world,time);
+               doMovement( allIndividuals[i],world,slice);
                printIndividual(allIndividuals[i]);
           }               
          
